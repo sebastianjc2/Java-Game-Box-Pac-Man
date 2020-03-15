@@ -60,6 +60,7 @@ public class GameSetUp implements Runnable {
         display.getFrame().addMouseMotionListener(mouseManager);
         display.getCanvas().addMouseListener(mouseManager);
         display.getCanvas().addMouseMotionListener(mouseManager);
+        display.flipFullScreen();
 
         //checks for all images to exist
         Images img = new Images();

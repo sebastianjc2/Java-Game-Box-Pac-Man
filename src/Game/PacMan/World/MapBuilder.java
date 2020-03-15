@@ -23,11 +23,12 @@ public class MapBuilder {
 	public static int bigDotC = new Color(167, 0, 150).getRGB();
 
 	public static Map createMap(BufferedImage mapImage, Handler handler){
+		pixelMultiplier =(int) Math.floor(handler.getHeight()/40);
 		Map mapInCreation = new Map(handler);
 		for (int i = 0; i < mapImage.getWidth(); i++) {
 			for (int j = 0; j < mapImage.getHeight(); j++) {
 				int currentPixel = mapImage.getRGB(i, j);
-				int xPos = i*pixelMultiplier;
+				int xPos = i*pixelMultiplier+handler.getWidth()/4;
 				int yPos = j*pixelMultiplier;
 				if(currentPixel == boundBlock){
 					BaseStatic BoundBlock = new BoundBlock(xPos,yPos,pixelMultiplier,pixelMultiplier,handler,getSprite(mapImage,i,j));

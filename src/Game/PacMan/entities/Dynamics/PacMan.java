@@ -29,7 +29,6 @@ public class PacMan extends BaseDynamic{
 
     @Override
     public void tick(){
-
         switch (facing){
             case "Right":
                 x+=velX;
@@ -58,19 +57,19 @@ public class PacMan extends BaseDynamic{
         if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_RIGHT)  || handler.getKeyManager().keyJustPressed(KeyEvent.VK_D)) && !turnFlag && checkPreHorizontalCollision("Right")){
             facing = "Right";
             turnFlag = true;
-            turnCooldown = 20;
-        }else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_LEFT) || handler.getKeyManager().keyJustPressed(KeyEvent.VK_A)) && !turnFlag&& checkPreHorizontalCollision("left")){
+            turnCooldown = 0;
+        }else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_LEFT) || handler.getKeyManager().keyJustPressed(KeyEvent.VK_A)) && !turnFlag&& checkPreHorizontalCollision("Left")){
             facing = "Left";
             turnFlag = true;
-            turnCooldown = 20;
+            turnCooldown = 0;
         }else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_UP)  ||handler.getKeyManager().keyJustPressed(KeyEvent.VK_W)) && !turnFlag&& checkPreVerticalCollisions("Up")){
             facing = "Up";
             turnFlag = true;
-            turnCooldown = 20;
+            turnCooldown = 0;
         }else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_DOWN)  || handler.getKeyManager().keyJustPressed(KeyEvent.VK_S)) && !turnFlag&& checkPreVerticalCollisions("Down")){
             facing = "Down";
             turnFlag = true;
-            turnCooldown = 20;
+            turnCooldown = 0;
         }
 
         if (facing.equals("Right") || facing.equals("Left")){
@@ -87,7 +86,7 @@ public class PacMan extends BaseDynamic{
         ArrayList<BaseDynamic> enemies = handler.getMap().getEnemiesOnMap();
 
         boolean pacmanDies = false;
-        boolean toUp = moving && facing.equals("Up");
+        boolean toUp = facing.equals("Up");
 
         Rectangle pacmanBounds = toUp ? pacman.getTopBounds() : pacman.getBottomBounds();
 
@@ -98,9 +97,9 @@ public class PacMan extends BaseDynamic{
                 if (pacmanBounds.intersects(brickBounds)) {
                     velY = 0;
                     if (toUp)
-                        pacman.setY(brick.getY() + pacman.getDimension().height);
+                        pacman.setY(brick.getY() + brick.getDimension().height);
                     else
-                        pacman.setY(brick.getY() - brick.getDimension().height);
+                        pacman.setY(brick.getY() - pacman.getDimension().height);
                 }
             }
         }
@@ -124,7 +123,7 @@ public class PacMan extends BaseDynamic{
         ArrayList<BaseStatic> bricks = handler.getMap().getBlocksOnMap();
 
         boolean pacmanDies = false;
-        boolean toUp = moving && facing.equals("Up");
+        boolean toUp = facing.equals("Up");
 
         Rectangle pacmanBounds = toUp ? pacman.getTopBounds() : pacman.getBottomBounds();
 
@@ -149,7 +148,7 @@ public class PacMan extends BaseDynamic{
         ArrayList<BaseDynamic> enemies = handler.getMap().getEnemiesOnMap();
         velX = speed;
         boolean pacmanDies = false;
-        boolean toRight = moving && facing.equals("Right");
+        boolean toRight = facing.equals("Right");
 
         Rectangle pacmanBounds = toRight ? pacman.getRightBounds() : pacman.getLeftBounds();
 
@@ -185,7 +184,7 @@ public class PacMan extends BaseDynamic{
         PacMan pacman = this;
         ArrayList<BaseStatic> bricks = handler.getMap().getBlocksOnMap();
         velX = speed;
-        boolean toRight = moving && facing.equals("Right");
+        boolean toRight = facing.equals("Right");
 
         Rectangle pacmanBounds = toRight ? pacman.getRightBounds() : pacman.getLeftBounds();
 
