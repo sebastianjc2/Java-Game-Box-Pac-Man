@@ -22,6 +22,7 @@ public class MapBuilder {
 	public static int ghostC = new Color(25, 255,0).getRGB();
 	public static int dotC = new Color(255, 10, 0).getRGB();
 	public static int bigDotC = new Color(167, 0, 150).getRGB();
+	public static Map mapInCreation;
 
 	public static Map createMap(BufferedImage mapImage, Handler handler){
 		pixelMultiplier =(int) Math.floor(handler.getHeight()/40);
