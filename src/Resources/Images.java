@@ -28,12 +28,16 @@ public class Images {
     public static BufferedImage[] galagaEnemyBee;
 
     public static BufferedImage map1;
-    public static BufferedImage ghost;
+    public static BufferedImage ghostBlinky;
+    public static BufferedImage ghostInky;
+    public static BufferedImage ghostPinky;
+    public static BufferedImage ghostClyde;
     public static BufferedImage[] pacmanDots;
     public static BufferedImage[] pacmanRight;
     public static BufferedImage[] pacmanLeft;
     public static BufferedImage[] pacmanUp;
     public static BufferedImage[] pacmanDown;
+    public static BufferedImage[] pacmanDeath;
     public static BufferedImage[] bound;
     public static BufferedImage intro;
     public static BufferedImage start;
@@ -63,6 +67,7 @@ public class Images {
         pacmanLeft = new BufferedImage[2];
         pacmanUp = new BufferedImage[2];
         pacmanDown = new BufferedImage[2];
+        pacmanDeath = new BufferedImage[12];
         bound = new BufferedImage[16];
 
 
@@ -132,9 +137,25 @@ public class Images {
             pacmanImageSheet = ImageIO.read(getClass().getResourceAsStream("/UI/SpriteSheets/PacMan/Background.png"));
             pacmanSpriteSheet = new SpriteSheet(pacmanImageSheet);
             map1 = ImageIO.read(getClass().getResourceAsStream("/UI/Backgrounds/PacManMaps/map1.png"));
-            ghost = pacmanSpriteSheet.crop(456,64,16,16);
+            ghostBlinky = pacmanSpriteSheet.crop(457,65,14,14);
+            ghostInky = pacmanSpriteSheet.crop(457,97,14,14);
+            ghostPinky = pacmanSpriteSheet.crop(457,81,14,14);
+            ghostClyde = pacmanSpriteSheet.crop(457,113,14,14);
             pacmanDots[0] = pacmanSpriteSheet.crop(643,18,16,16);
             pacmanDots[1] = pacmanSpriteSheet.crop(623,18,16,16);
+
+            pacmanDeath[0] = pacmanSpriteSheet.crop(489,1,13,13);
+            pacmanDeath[1] = pacmanSpriteSheet.crop(505,1,13,13);
+            pacmanDeath[2] = pacmanSpriteSheet.crop(520,1,15,13);
+            pacmanDeath[3] = pacmanSpriteSheet.crop(536,1,15,13);
+            pacmanDeath[4] = pacmanSpriteSheet.crop(552,1,15,13);
+            pacmanDeath[5] = pacmanSpriteSheet.crop(568,1,15,13);
+            pacmanDeath[6] = pacmanSpriteSheet.crop(584,1,15,13);
+            pacmanDeath[7] = pacmanSpriteSheet.crop(601,1,13,13);
+            pacmanDeath[8] = pacmanSpriteSheet.crop(617,1,13,13);
+            pacmanDeath[9] = pacmanSpriteSheet.crop(633,1,13,13);
+            pacmanDeath[10] = pacmanSpriteSheet.crop(649,1,13,13);
+            pacmanDeath[11] = pacmanSpriteSheet.crop(665,1,13,13);
 
             bound[0] = pacmanSpriteSheet.crop(603,18,16,16);//single
             bound[1] = pacmanSpriteSheet.crop(615,37,16,16);//right open

@@ -8,7 +8,9 @@ import Resources.Images;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Ghost extends BaseDynamic{
 
@@ -16,15 +18,36 @@ public class Ghost extends BaseDynamic{
     public String facing = "Left";
     public boolean moving = true,turnFlag = false;
     public Animation leftAnim,rightAnim,upAnim,downAnim;
-    int turnCooldown = 30;
+    int turnCooldown = 0;
+    BufferedImage image;
 
 
-    public Ghost(int x, int y, int width, int height, Handler handler) {
-        super(x, y, width, height, handler, Images.ghost);
+    public Ghost(int x, int y, int width, int height, Handler handler, int ghost) {
+        super(x, y, width, height, handler, null);
         leftAnim = new Animation(128,Images.pacmanLeft);
         rightAnim = new Animation(128,Images.pacmanRight);
         upAnim = new Animation(128,Images.pacmanUp);
         downAnim = new Animation(128,Images.pacmanDown);
+        switch (ghost){
+            case 0:
+                //inky
+                image = Images.ghostInky;
+                break;
+            case 1:
+                //blinky
+                image = Images.ghostBlinky;
+                break;
+            case 2:
+                //pinky
+                image = Images.ghostPinky;
+                break;
+            case 3:
+                //clyde
+                image = Images.ghostClyde;
+                break;
+        }
+
+        super.sprite = image;
     }
 
     @Override

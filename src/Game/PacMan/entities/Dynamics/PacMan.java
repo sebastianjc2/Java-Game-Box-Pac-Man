@@ -15,8 +15,9 @@ public class PacMan extends BaseDynamic{
     protected double velX,velY,speed = 1;
     public String facing = "Left";
     public boolean moving = true,turnFlag = false;
-    public Animation leftAnim,rightAnim,upAnim,downAnim;
+    public Animation leftAnim,rightAnim,upAnim,downAnim, pacmanDeathAnim;
     int turnCooldown = 20;
+    public static int health = 3, dedcounter = 0;
 
 
     public PacMan(int x, int y, int width, int height, Handler handler) {
@@ -25,57 +26,76 @@ public class PacMan extends BaseDynamic{
         rightAnim = new Animation(128,Images.pacmanRight);
         upAnim = new Animation(128,Images.pacmanUp);
         downAnim = new Animation(128,Images.pacmanDown);
+        pacmanDeathAnim = new Animation(100,Images.pacmanDeath);
     }
 
     @Override
-    public void tick(){
-        switch (facing){
-            case "Right":
-                x+=velX;
-                rightAnim.tick();
-                break;
-            case "Left":
-                x-=velX;
-                leftAnim.tick();
-                break;
-            case "Up":
-                y-=velY;
-                upAnim.tick();
-                break;
-            case "Down":
-                y+=velY;
-                downAnim.tick();
-                break;
-        }
-        if (turnCooldown<=0){
-            turnFlag= false;
-        }
-        if (turnFlag){
-            turnCooldown--;
-        }
+    public void tick() {
+//        System.out.println(x + " " + y);
+        if (dedcounter<=0) {
+            switch (facing) {
+                case "Right":
+                    x += velX;
+                    rightAnim.tick();
+                    break;
+                case "Left":
+                    x -= velX;
+                    leftAnim.tick();
+                    break;
+                case "Up":
+                    y -= velY;
+                    upAnim.tick();
+                    break;
+                case "Down":
+                    y += velY;
+                    downAnim.tick();
+                    break;
+            }
+            if (turnCooldown <= 0) {
+                turnFlag = false;
+            }
+            if (turnFlag) {
+                turnCooldown--;
+            }
 
-        if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_RIGHT)  || handler.getKeyManager().keyJustPressed(KeyEvent.VK_D)) && !turnFlag && checkPreHorizontalCollision("Right")){
-            facing = "Right";
-            turnFlag = true;
-            turnCooldown = 0;
-        }else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_LEFT) || handler.getKeyManager().keyJustPressed(KeyEvent.VK_A)) && !turnFlag&& checkPreHorizontalCollision("Left")){
-            facing = "Left";
-            turnFlag = true;
-            turnCooldown = 0;
-        }else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_UP)  ||handler.getKeyManager().keyJustPressed(KeyEvent.VK_W)) && !turnFlag&& checkPreVerticalCollisions("Up")){
-            facing = "Up";
-            turnFlag = true;
-            turnCooldown = 0;
-        }else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_DOWN)  || handler.getKeyManager().keyJustPressed(KeyEvent.VK_S)) && !turnFlag&& checkPreVerticalCollisions("Down")){
-            facing = "Down";
-            turnFlag = true;
-            turnCooldown = 0;
-        }
 
-        if (facing.equals("Right") || facing.equals("Left")){
-            checkHorizontalCollision();
-        }else{
-            checkVerticalCollisions();
+            if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_RIGHT) || handler.getKeyManager().keyJustPressed(KeyEvent.VK_D)) && !turnFlag && checkPreHorizontalCollision("Right")) {
+                facing = "Right";
+                turnFlag = true;
+                turnCooldown = 0;
+            } else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_LEFT) || handler.getKeyManager().keyJustPressed(KeyEvent.VK_A)) && !turnFlag && checkPreHorizontalCollision("Left")) {
+                facing = "Left";
+                turnFlag = true;
+                turnCooldown = 0;
+            } else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_UP) || handler.getKeyManager().keyJustPressed(KeyEvent.VK_W)) && !turnFlag && checkPreVerticalCollisions("Up")) {
+                facing = "Up";
+                turnFlag = true;
+                turnCooldown = 0;
+            } else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_DOWN) || handler.getKeyManager().keyJustPressed(KeyEvent.VK_S)) && !turnFlag && checkPreVerticalCollisions("Down")) {
+                facing = "Down";
+                turnFlag = true;
+                turnCooldown = 0;
+            }
+
+            if (facing.equals("Right") || facing.equals("Left")) {
+                checkHorizontalCollision();
+            } else {
+                checkVerticalCollisions();
+            }
+
+            if(ded) {
+                dedcounter=60*2;
+                handler.getMusicHandler().playEffect("pacman_death.wav");
+            }
+        }
+        else {
+            pacmanDeathAnim.tick();
+            dedcounter--;
+            if (pacmanDeathAnim.getIndex()==11) {
+                x = 189 + handler.getWidth() / 4;
+                y = 972;
+                ded = false;
+            }
         }
 
     }
@@ -105,15 +125,20 @@ public class PacMan extends BaseDynamic{
         }
 
         for(BaseDynamic enemy : enemies){
-            Rectangle enemyBounds = !toUp ? enemy.getTopBounds() : enemy.getBottomBounds();
-            if (pacmanBounds.intersects(enemyBounds)) {
-                pacmanDies = true;
-                break;
+            if (enemy instanceof Ghost) {
+                Rectangle enemyBounds = enemy.getBounds();
+                if (pacman.getBounds().intersects(enemyBounds)) {
+                    pacmanDies = true;
+                    break;
+                }
             }
         }
 
         if(pacmanDies) {
+            System.out.println("here??");
             handler.getMap().reset();
+            health--;
+            ded = true;
         }
     }
 
@@ -153,15 +178,19 @@ public class PacMan extends BaseDynamic{
         Rectangle pacmanBounds = toRight ? pacman.getRightBounds() : pacman.getLeftBounds();
 
         for(BaseDynamic enemy : enemies){
-            Rectangle enemyBounds = !toRight ? enemy.getRightBounds() : enemy.getLeftBounds();
-            if (pacmanBounds.intersects(enemyBounds)) {
-                pacmanDies = true;
-                break;
+            if (enemy instanceof Ghost) {
+                Rectangle enemyBounds = enemy.getBounds();
+                if (pacman.getBounds().intersects(enemyBounds)) {
+                    pacmanDies = true;
+                    break;
+                }
             }
         }
 
         if(pacmanDies) {
             handler.getMap().reset();
+            health--;
+            ded = true;
         }else {
 
             for (BaseStatic brick : bricks) {
@@ -199,6 +228,13 @@ public class PacMan extends BaseDynamic{
         return true;
     }
 
+    public static void setHealth(int x) {
+        health = x;
+    }
+
+    public static int getHealth() {
+        return health;
+    }
 
     public double getVelX() {
         return velX;
@@ -207,5 +243,8 @@ public class PacMan extends BaseDynamic{
         return velY;
     }
 
+    public void ded() {
+
+    }
 
 }

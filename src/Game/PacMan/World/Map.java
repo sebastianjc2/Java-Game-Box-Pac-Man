@@ -17,6 +17,7 @@ public class Map {
     private double bottomBorder;
     private Random rand;
     private int mapBackground;
+    ArrayList<BaseDynamic> toAdd = new ArrayList<>();
 
     public Map(Handler handler) {
         this.handler=handler;
@@ -37,6 +38,10 @@ public class Map {
 
     }
 
+    public void toAdd(BaseDynamic x){
+        toAdd.add(x);
+    }
+
     public void drawMap(Graphics2D g2) {
         for (BaseStatic block:blocksOnMap) {
 
@@ -45,19 +50,24 @@ public class Map {
         }
         for (BaseDynamic entity:enemiesOnMap) {
             if (entity instanceof PacMan) {
-                switch (((PacMan) entity).facing){
-                    case "Right":
-                        g2.drawImage(((PacMan) entity).rightAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
-                        break;
-                    case "Left":
-                        g2.drawImage(((PacMan) entity).leftAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
-                        break;
-                    case "Up":
-                        g2.drawImage(((PacMan) entity).upAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
-                        break;
-                    case "Down":
-                        g2.drawImage(((PacMan) entity).downAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
-                        break;
+                if(!entity.ded) {
+                    switch (((PacMan) entity).facing) {
+                        case "Right":
+                            g2.drawImage(((PacMan) entity).rightAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
+                            break;
+                        case "Left":
+                            g2.drawImage(((PacMan) entity).leftAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
+                            break;
+                        case "Up":
+                            g2.drawImage(((PacMan) entity).upAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
+                            break;
+                        case "Down":
+                            g2.drawImage(((PacMan) entity).downAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
+                            break;
+                    }
+                }
+                else{
+                    g2.drawImage(((PacMan) entity).pacmanDeathAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
                 }
             }
             else {
@@ -74,6 +84,11 @@ public class Map {
     public ArrayList<BaseDynamic> getEnemiesOnMap() {
         return enemiesOnMap;
     }
+
+    public ArrayList<BaseDynamic> getEnemiesToAdd() {
+        return toAdd;
+    }
+
 
     public double getBottomBorder() {
         return bottomBorder;
