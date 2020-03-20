@@ -30,20 +30,32 @@ public class Ghost extends BaseDynamic{
         downAnim = new Animation(128,Images.pacmanDown);
         switch (ghost){
             case 0:
-                //inky
-                image = Images.ghostInky;
+                //blinky
+                leftAnim = new Animation(128,Images.ghostBlinkyLeft);
+                rightAnim = new Animation(128,Images.ghostBlinkyRight);
+                upAnim = new Animation(128,Images.ghostBlinkyUp);
+                downAnim = new Animation(128,Images.ghostBlinkyDown);
                 break;
             case 1:
-                //blinky
-                image = Images.ghostBlinky;
+                //inky
+                leftAnim = new Animation(128,Images.ghostInkyLeft);
+                rightAnim = new Animation(128,Images.ghostInkyRight);
+                upAnim = new Animation(128,Images.ghostInkyUp);
+                downAnim = new Animation(128,Images.ghostInkyDown);
                 break;
             case 2:
                 //pinky
-                image = Images.ghostPinky;
+                leftAnim = new Animation(128,Images.ghostPinkyLeft);
+                rightAnim = new Animation(128,Images.ghostPinkyRight);
+                upAnim = new Animation(128,Images.ghostPinkyUp);
+                downAnim = new Animation(128,Images.ghostPinkyDown);
                 break;
             case 3:
                 //clyde
-                image = Images.ghostClyde;
+                leftAnim = new Animation(128,Images.ghostClydeLeft);
+                rightAnim = new Animation(128,Images.ghostClydeRight);
+                upAnim = new Animation(128,Images.ghostClydeUp);
+                downAnim = new Animation(128,Images.ghostClydeDown);
                 break;
         }
 
@@ -83,7 +95,7 @@ public class Ghost extends BaseDynamic{
             facing = "Right";
             turnFlag = true;
 
-        }else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_LEFT) || handler.getKeyManager().keyJustPressed(KeyEvent.VK_A)) && !turnFlag&& checkPreHorizontalCollision("left")){
+        }else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_LEFT) || handler.getKeyManager().keyJustPressed(KeyEvent.VK_A)) && !turnFlag&& checkPreHorizontalCollision("Left")){
             facing = "Left";
             turnFlag = true;
         }else if ((handler.getKeyManager().keyJustPressed(KeyEvent.VK_UP)  ||handler.getKeyManager().keyJustPressed(KeyEvent.VK_W)) && !turnFlag&& checkPreVerticalCollisions("Up")){

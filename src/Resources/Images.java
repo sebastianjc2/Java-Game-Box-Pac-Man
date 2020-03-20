@@ -28,17 +28,30 @@ public class Images {
     public static BufferedImage[] galagaEnemyBee;
 
     public static BufferedImage map1;
-    public static BufferedImage ghostBlinky;
-    public static BufferedImage ghostInky;
-    public static BufferedImage ghostPinky;
-    public static BufferedImage ghostClyde;
     public static BufferedImage[] pacmanDots;
+    public static BufferedImage[] bound;
     public static BufferedImage[] pacmanRight;
     public static BufferedImage[] pacmanLeft;
     public static BufferedImage[] pacmanUp;
     public static BufferedImage[] pacmanDown;
     public static BufferedImage[] pacmanDeath;
-    public static BufferedImage[] bound;
+    public static BufferedImage[] ghostBlinkyRight;
+    public static BufferedImage[] ghostBlinkyLeft;
+    public static BufferedImage[] ghostBlinkyUp;
+    public static BufferedImage[] ghostBlinkyDown;
+    public static BufferedImage[] ghostInkyRight;
+    public static BufferedImage[] ghostInkyLeft;
+    public static BufferedImage[] ghostInkyUp;
+    public static BufferedImage[] ghostInkyDown;
+    public static BufferedImage[] ghostPinkyRight;
+    public static BufferedImage[] ghostPinkyLeft;
+    public static BufferedImage[] ghostPinkyUp;
+    public static BufferedImage[] ghostPinkyDown;
+    public static BufferedImage[] ghostClydeRight;
+    public static BufferedImage[] ghostClydeLeft;
+    public static BufferedImage[] ghostClydeUp;
+    public static BufferedImage[] ghostClydeDown;
+    public static BufferedImage[] ghostCanDie;
     public static BufferedImage intro;
     public static BufferedImage start;
 
@@ -63,12 +76,30 @@ public class Images {
         galagaEnemyBee = new BufferedImage[8];
 
         pacmanDots = new BufferedImage[2];
+        bound = new BufferedImage[16];
         pacmanRight = new BufferedImage[2];
         pacmanLeft = new BufferedImage[2];
         pacmanUp = new BufferedImage[2];
         pacmanDown = new BufferedImage[2];
         pacmanDeath = new BufferedImage[12];
-        bound = new BufferedImage[16];
+        ghostBlinkyRight = new BufferedImage[2];
+        ghostBlinkyLeft = new BufferedImage[2];
+        ghostBlinkyUp = new BufferedImage[2];
+        ghostBlinkyDown = new BufferedImage[2];
+        ghostInkyRight = new BufferedImage[2];
+        ghostInkyLeft = new BufferedImage[2];
+        ghostInkyUp = new BufferedImage[2];
+        ghostInkyDown = new BufferedImage[2];
+        ghostPinkyRight = new BufferedImage[2];
+        ghostPinkyLeft = new BufferedImage[2];
+        ghostPinkyUp = new BufferedImage[2];
+        ghostPinkyDown = new BufferedImage[2];
+        ghostClydeRight = new BufferedImage[2];
+        ghostClydeLeft = new BufferedImage[2];
+        ghostClydeUp = new BufferedImage[2];
+        ghostClydeDown = new BufferedImage[2];
+        ghostCanDie = new BufferedImage[4];
+
 
 
         try {
@@ -134,28 +165,15 @@ public class Images {
 
             galagaPlayerLaser = galagaSpriteSheet.crop(365 ,219,3,8);
 
+
+
+            //PacMan game sprites
             pacmanImageSheet = ImageIO.read(getClass().getResourceAsStream("/UI/SpriteSheets/PacMan/Background.png"));
             pacmanSpriteSheet = new SpriteSheet(pacmanImageSheet);
             map1 = ImageIO.read(getClass().getResourceAsStream("/UI/Backgrounds/PacManMaps/map1.png"));
-            ghostBlinky = pacmanSpriteSheet.crop(457,65,14,14);
-            ghostInky = pacmanSpriteSheet.crop(457,97,14,14);
-            ghostPinky = pacmanSpriteSheet.crop(457,81,14,14);
-            ghostClyde = pacmanSpriteSheet.crop(457,113,14,14);
+
             pacmanDots[0] = pacmanSpriteSheet.crop(643,18,16,16);
             pacmanDots[1] = pacmanSpriteSheet.crop(623,18,16,16);
-
-            pacmanDeath[0] = pacmanSpriteSheet.crop(489,1,13,13);
-            pacmanDeath[1] = pacmanSpriteSheet.crop(505,1,13,13);
-            pacmanDeath[2] = pacmanSpriteSheet.crop(520,1,15,13);
-            pacmanDeath[3] = pacmanSpriteSheet.crop(536,1,15,13);
-            pacmanDeath[4] = pacmanSpriteSheet.crop(552,1,15,13);
-            pacmanDeath[5] = pacmanSpriteSheet.crop(568,1,15,13);
-            pacmanDeath[6] = pacmanSpriteSheet.crop(584,1,15,13);
-            pacmanDeath[7] = pacmanSpriteSheet.crop(601,1,13,13);
-            pacmanDeath[8] = pacmanSpriteSheet.crop(617,1,13,13);
-            pacmanDeath[9] = pacmanSpriteSheet.crop(633,1,13,13);
-            pacmanDeath[10] = pacmanSpriteSheet.crop(649,1,13,13);
-            pacmanDeath[11] = pacmanSpriteSheet.crop(665,1,13,13);
 
             bound[0] = pacmanSpriteSheet.crop(603,18,16,16);//single
             bound[1] = pacmanSpriteSheet.crop(615,37,16,16);//right open
@@ -174,6 +192,8 @@ public class Images {
             bound[14] = pacmanSpriteSheet.crop(479,208,16,16);//top
             bound[15] = pacmanSpriteSheet.crop(479,223,16,16);//bottom
 
+
+            //PacMan sprites
             pacmanRight[0] = pacmanSpriteSheet.crop(473,1,12,13);
             pacmanRight[1] = pacmanSpriteSheet.crop(489,1,13,13);
 
@@ -185,6 +205,80 @@ public class Images {
 
             pacmanDown[0] = pacmanSpriteSheet.crop(473,48,13,12);
             pacmanDown[1] = pacmanSpriteSheet.crop(489,1,13,13);
+
+            pacmanDeath[0] = pacmanSpriteSheet.crop(489,1,13,13);
+            pacmanDeath[1] = pacmanSpriteSheet.crop(505,1,13,13);
+            pacmanDeath[2] = pacmanSpriteSheet.crop(520,1,15,13);
+            pacmanDeath[3] = pacmanSpriteSheet.crop(536,1,15,13);
+            pacmanDeath[4] = pacmanSpriteSheet.crop(552,1,15,13);
+            pacmanDeath[5] = pacmanSpriteSheet.crop(568,1,15,13);
+            pacmanDeath[6] = pacmanSpriteSheet.crop(584,1,15,13);
+            pacmanDeath[7] = pacmanSpriteSheet.crop(601,1,13,13);
+            pacmanDeath[8] = pacmanSpriteSheet.crop(617,1,13,13);
+            pacmanDeath[9] = pacmanSpriteSheet.crop(633,1,13,13);
+            pacmanDeath[10] = pacmanSpriteSheet.crop(649,1,13,13);
+            pacmanDeath[11] = pacmanSpriteSheet.crop(665,1,13,13);
+
+
+            //Ghost sprites
+            //Blinky
+            ghostBlinkyRight[0] = pacmanSpriteSheet.crop(457,65,14,14);
+            ghostBlinkyRight[1] = pacmanSpriteSheet.crop(473,65,14,14);
+
+            ghostBlinkyLeft[0] = pacmanSpriteSheet.crop(489,65,14,14);
+            ghostBlinkyLeft[1] = pacmanSpriteSheet.crop(505,65,14,14);
+
+            ghostBlinkyUp[0] = pacmanSpriteSheet.crop(521,65,14,14);
+            ghostBlinkyUp[1] = pacmanSpriteSheet.crop(537,65,14,14);
+
+            ghostBlinkyDown[0] = pacmanSpriteSheet.crop(553,65,14,14);
+            ghostBlinkyDown[1] = pacmanSpriteSheet.crop(569,65,14,14);
+
+            //Inky
+            ghostInkyRight[0] = pacmanSpriteSheet.crop(457,97,14,14);
+            ghostInkyRight[1] = pacmanSpriteSheet.crop(473,97,14,14);
+
+            ghostInkyLeft[0] = pacmanSpriteSheet.crop(489,97,14,14);
+            ghostInkyLeft[1] = pacmanSpriteSheet.crop(505,97,14,14);
+
+            ghostInkyUp[0] = pacmanSpriteSheet.crop(521,97,14,14);
+            ghostInkyUp[1] = pacmanSpriteSheet.crop(537,97,14,14);
+
+            ghostInkyDown[0] = pacmanSpriteSheet.crop(553,97,14,14);
+            ghostInkyDown[1] = pacmanSpriteSheet.crop(569,97,14,14);
+
+            //Pinky
+            ghostPinkyRight[0] = pacmanSpriteSheet.crop(457,81,14,14);
+            ghostPinkyRight[1] = pacmanSpriteSheet.crop(473,81,14,14);
+
+            ghostPinkyLeft[0] = pacmanSpriteSheet.crop(489,81,14,14);
+            ghostPinkyLeft[1] = pacmanSpriteSheet.crop(505,81,14,14);
+
+            ghostPinkyUp[0] = pacmanSpriteSheet.crop(521,81,14,14);
+            ghostPinkyUp[1] = pacmanSpriteSheet.crop(537,81,14,14);
+
+            ghostPinkyDown[0] = pacmanSpriteSheet.crop(553,81,14,14);
+            ghostPinkyDown[1] = pacmanSpriteSheet.crop(569,81,14,14);
+
+            //Clyde
+            ghostClydeRight[0] = pacmanSpriteSheet.crop(457,113,14,14);
+            ghostClydeRight[1] = pacmanSpriteSheet.crop(473,113,14,14);
+
+            ghostClydeLeft[0] = pacmanSpriteSheet.crop(489,113,14,14);
+            ghostClydeLeft[1] = pacmanSpriteSheet.crop(505,113,14,14);
+
+            ghostClydeUp[0] = pacmanSpriteSheet.crop(521,113,14,14);
+            ghostClydeUp[1] = pacmanSpriteSheet.crop(537,113,14,14);
+
+            ghostClydeDown[0] = pacmanSpriteSheet.crop(553,113,14,14);
+            ghostClydeDown[1] = pacmanSpriteSheet.crop(569,113,14,14);
+
+
+            //Ghost can die mode
+            ghostCanDie[0] = pacmanSpriteSheet.crop(585,65,14,14);
+            ghostCanDie[1] = pacmanSpriteSheet.crop(633,65,14,14);
+            ghostCanDie[2] = pacmanSpriteSheet.crop(601,65,14,14);
+            ghostCanDie[3] = pacmanSpriteSheet.crop(617,65,14,14);
 
             intro = ImageIO.read(getClass().getResourceAsStream("/UI/SpriteSheets/PacMan/intro.png"));
             start = ImageIO.read(getClass().getResourceAsStream("/UI/Backgrounds/startScreen.png"));

@@ -15,7 +15,6 @@ public class GhostSpawner extends BaseDynamic{
 
     public static int[] ghosts = new int[4];
     private static Handler handler;
-    Random random = new Random();
     private static int x, y;
 
     public GhostSpawner(int x, int y, int width, int height, Handler handler) {
@@ -45,7 +44,6 @@ public class GhostSpawner extends BaseDynamic{
 
     public static void spawn() {
         for(int i = 0; i < ghosts.length; i++) {
-            System.out.println(i);
             if (ghosts[i]==0) {
                 BaseDynamic newGhost = new Ghost(x, y, pixelMultiplier, pixelMultiplier, handler, i);
                 mapInCreation.toAdd(newGhost);
