@@ -97,6 +97,9 @@ public class PacMan extends BaseDynamic{
                 ded = false;
             }
         }
+        if (handler.getKeyManager().life_up && health != 3){
+            health=health+1;
+        }
 
     }
 
