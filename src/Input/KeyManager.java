@@ -30,11 +30,12 @@ public class KeyManager implements KeyListener {
 
 			}else if(justPressed[i]){
 				cantPress[i]=true;
-				justPressed[i] =false;
+				justPressed[i]=false;
 			}
 			if(!cantPress[i] && keys[i]){
 				justPressed[i]=true;
 			}
+
 		}
 
 		up = keys[KeyEvent.VK_W] || keys[KeyEvent.VK_UP];
@@ -43,6 +44,7 @@ public class KeyManager implements KeyListener {
 		right = keys[KeyEvent.VK_D] || keys[KeyEvent.VK_RIGHT];
 
 		pausebutt = keys[KeyEvent.VK_ESCAPE];
+
 
 	}
 
@@ -69,6 +71,18 @@ public class KeyManager implements KeyListener {
 		if(keyCode < 0 || keyCode >= keys.length)
 			return false;
 		return justPressed[keyCode];
+	}
+
+	public boolean keyHeld(int keyCode){
+		if(keyCode < 0 || keyCode >= keys.length)
+			return false;
+		return keys[keyCode];
+	}
+
+	public boolean keyJustReleased(int keyCode){
+		if(keyCode < 0 || keyCode >= keys.length)
+			return false;
+		return !keys[keyCode];
 	}
 
 }
