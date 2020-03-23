@@ -12,6 +12,7 @@ import Game.PacMan.entities.Statics.BigDot;
 import Game.PacMan.entities.Statics.BoundBlock;
 import Game.PacMan.entities.Statics.Dot;
 import Main.Handler;
+import Resources.Animation;
 import Resources.Images;
 
 import java.awt.*;
@@ -27,6 +28,7 @@ import static Game.PacMan.entities.Dynamics.PacMan.setHealth;
 public class PacManState extends State {
 
     private UIManager uiManager;
+    private Animation titleAnimation;
     public String Mode = "Intro";
     public int startCooldown = 60*4;//seven seconds for the music to finish
     public static boolean justStarted = true;
@@ -34,6 +36,8 @@ public class PacManState extends State {
 
     public PacManState(Handler handler){
         super(handler);
+        titleAnimation = new Animation(256,Images.pacmanLogo);
+
         handler.setMap(MapBuilder.createMap(Images.map1, handler));
 
         for (BaseDynamic entity : handler.getMap().getEnemiesOnMap()) {
@@ -105,6 +109,7 @@ public class PacManState extends State {
                 }
             }
             else {
+            	titleAnimation.tick();
                 Mode = "Menu";
                 killAll();
             }

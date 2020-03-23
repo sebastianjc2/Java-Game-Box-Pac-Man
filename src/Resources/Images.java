@@ -32,6 +32,7 @@ public class Images {
     public static BufferedImage ghostInky;
     public static BufferedImage ghostPinky;
     public static BufferedImage ghostClyde;
+    public static BufferedImage[] pacmanLogo;
     public static BufferedImage[] pacmanDots;
     public static BufferedImage[] pacmanRight;
     public static BufferedImage[] pacmanLeft;
@@ -61,7 +62,8 @@ public class Images {
         galagaPlayerDeath = new BufferedImage[8];
         galagaEnemyDeath = new BufferedImage[5];
         galagaEnemyBee = new BufferedImage[8];
-
+        
+        pacmanLogo = new BufferedImage[1];
         pacmanDots = new BufferedImage[2];
         pacmanRight = new BufferedImage[2];
         pacmanLeft = new BufferedImage[2];
@@ -133,6 +135,9 @@ public class Images {
 
 
             galagaPlayerLaser = galagaSpriteSheet.crop(365 ,219,3,8);
+            
+            pacmanLogo[0] = ImageIO.read(getClass().getResourceAsStream("/UI/Misc/logo.png"));
+
 
             pacmanImageSheet = ImageIO.read(getClass().getResourceAsStream("/UI/SpriteSheets/PacMan/Background.png"));
             pacmanSpriteSheet = new SpriteSheet(pacmanImageSheet);

@@ -34,6 +34,7 @@ public class MenuState extends State {
         g.fillRect(0,0,handler.getWidth(),handler.getHeight());
         g.drawImage(Images.titleScreenBackground,0,0,handler.getWidth(),handler.getHeight(),null);
         uiManager.Render(g);
+        
 
     }
 
