@@ -39,6 +39,8 @@ public class Images {
     public static BufferedImage[] pacmanUp;
     public static BufferedImage[] pacmanDown;
     public static BufferedImage[] pacmanDeath;
+    public static BufferedImage[] bigDotBlink;
+
     public static BufferedImage[] bound;
     public static BufferedImage intro;
     public static BufferedImage start;
@@ -69,6 +71,7 @@ public class Images {
         pacmanLeft = new BufferedImage[2];
         pacmanUp = new BufferedImage[2];
         pacmanDown = new BufferedImage[2];
+        bigDotBlink = new BufferedImage[2];
         pacmanDeath = new BufferedImage[12];
         bound = new BufferedImage[16];
 
@@ -190,6 +193,10 @@ public class Images {
 
             pacmanDown[0] = pacmanSpriteSheet.crop(473,48,13,12);
             pacmanDown[1] = pacmanSpriteSheet.crop(489,1,13,13);
+            
+            bigDotBlink[0] = pacmanSpriteSheet.crop(647, 22, 8, 8);
+            bigDotBlink[1] = pacmanSpriteSheet.crop(655, 22, 8, 8);
+
 
             intro = ImageIO.read(getClass().getResourceAsStream("/UI/SpriteSheets/PacMan/intro.png"));
             start = ImageIO.read(getClass().getResourceAsStream("/UI/Backgrounds/startScreen.png"));

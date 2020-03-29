@@ -54,6 +54,7 @@ public class PacManState extends State {
 
     @Override
     public void tick() {
+    	//handler.getPacman().bigDotBlink.tick();
         if (Mode.equals("Stage")){
             if(PacMan.getHealth()>0 || dedcounter>0) {
                 if (startCooldown <= 0) {
