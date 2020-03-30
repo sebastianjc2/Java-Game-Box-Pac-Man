@@ -1,5 +1,6 @@
 package Game.PacMan.World;
 
+import Game.PacMan.entities.BaseEntity;
 import Game.PacMan.entities.Dynamics.BaseDynamic;
 import Game.PacMan.entities.Dynamics.Ghost;
 import Game.PacMan.entities.Dynamics.GhostSpawner;
@@ -23,25 +24,37 @@ public class MapBuilder {
 	public static int dotC = new Color(255, 10, 0).getRGB();
 	public static int bigDotC = new Color(167, 0, 150).getRGB();
 	public static Map mapInCreation;
+	public static int pacmanX, pacmanY;
+	public static BaseEntity arena;
+	public static int centralize;
 
 	public static Map createMap(BufferedImage mapImage, Handler handler){
-		pixelMultiplier =(int) Math.floor(handler.getHeight()/40);
+		pixelMultiplier =(int) Math.floor(handler.getHeight()/mapImage.getHeight());
 		mapInCreation = new Map(handler);
+		centralize = handler.getWidth() / 2 - (mapImage.getWidth() * pixelMultiplier / 2);
+		if(mapImage == Images.map1){
+			arena = new BaseEntity(16*pixelMultiplier + centralize, 17*pixelMultiplier, 7*pixelMultiplier, 5*pixelMultiplier, handler, null);
+		}
+		else if (mapImage == Images.map2){
+			arena = new BaseEntity(7*pixelMultiplier + centralize, 9*pixelMultiplier, 5*pixelMultiplier, 3*pixelMultiplier, handler ,null);
+		}
 		for (int i = 0; i < mapImage.getWidth(); i++) {
 			for (int j = 0; j < mapImage.getHeight(); j++) {
 				int currentPixel = mapImage.getRGB(i, j);
-				int xPos = i*pixelMultiplier+handler.getWidth()/4;
+				int xPos = i*pixelMultiplier+centralize;
 				int yPos = j*pixelMultiplier;
 				if(currentPixel == boundBlock){
 					BaseStatic BoundBlock = new BoundBlock(xPos,yPos,pixelMultiplier,pixelMultiplier,handler,getSprite(mapImage,i,j));
 					mapInCreation.addBlock(BoundBlock);
 				}else if(currentPixel == pacman){
+					pacmanX = xPos;
+					pacmanY = yPos;
 					BaseDynamic PacMan = new PacMan(xPos,yPos,pixelMultiplier,pixelMultiplier,handler);
 					mapInCreation.addEnemy(PacMan);
 					handler.setPacman((Game.PacMan.entities.Dynamics.PacMan) PacMan);
 				}else if(currentPixel == ghostC){
-					BaseDynamic ghostSpawner = new GhostSpawner(xPos, yPos, pixelMultiplier, pixelMultiplier, handler);
-					mapInCreation.addEnemy(ghostSpawner);
+					BaseStatic ghostSpawner = new GhostSpawner(xPos, yPos, pixelMultiplier, pixelMultiplier, handler);
+					mapInCreation.addBlock(ghostSpawner);
 				}else if(currentPixel == dotC){
 					BaseStatic dot = new Dot(xPos,yPos,pixelMultiplier,pixelMultiplier,handler);
 					mapInCreation.addBlock(dot);

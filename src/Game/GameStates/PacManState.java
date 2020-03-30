@@ -17,12 +17,12 @@ import Resources.Images;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static Game.PacMan.entities.Dynamics.GhostSpawner.killAll;
-import static Game.PacMan.entities.Dynamics.GhostSpawner.spawn;
-import static Game.PacMan.entities.Dynamics.PacMan.dedcounter;
-import static Game.PacMan.entities.Dynamics.PacMan.setHealth;
+import static Game.PacMan.entities.Dynamics.GhostSpawner.*;
+import static Game.PacMan.World.MapBuilder.*;
+import static Game.PacMan.entities.Dynamics.PacMan.*;
 
 public class PacManState extends State {
 
@@ -30,21 +30,13 @@ public class PacManState extends State {
     public String Mode = "Intro";
     public int startCooldown = 60*4;//seven seconds for the music to finish
     public static boolean justStarted = true;
+    public static int timer = 0;
+    public static BufferedImage theMap = Images.map2;
 
 
     public PacManState(Handler handler){
         super(handler);
-        handler.setMap(MapBuilder.createMap(Images.map1, handler));
-
-        for (BaseDynamic entity : handler.getMap().getEnemiesOnMap()) {
-            if (entity instanceof GhostSpawner) {
-                entity.tick();
-            }
-        }
-        for (BaseDynamic entity : handler.getMap().getEnemiesToAdd()) {
-            handler.getMap().getEnemiesOnMap().add(entity);
-        }
-        handler.getMap().getEnemiesToAdd().clear();
+        handler.setMap(MapBuilder.createMap(theMap, handler));
     }
 
 
@@ -93,12 +85,14 @@ public class PacManState extends State {
 
 
                     if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_C)) {
-                        spawn();
+                        spawn(false);
                     }
 
                     if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_X)) {
                         killAll();
                     }
+
+                    timer++;
 
                 } else {
                     startCooldown--;
@@ -126,8 +120,11 @@ public class PacManState extends State {
 
     @Override
     public void render(Graphics g) {
-
+        g.setColor(Color.BLUE);
+        g.fillRect(0,0,handler.getWidth(),handler.getHeight());
         if (Mode.equals("Stage")){
+            g.setColor(Color.BLACK);
+            g.fillRect(centralize - pixelMultiplier/2,0,pixelMultiplier*theMap.getWidth() + pixelMultiplier,handler.getHeight());
             Graphics2D g2 = (Graphics2D) g.create();
             handler.getMap().drawMap(g2);
             g.setColor(Color.WHITE);
@@ -137,14 +134,19 @@ public class PacManState extends State {
             for (int i = 0; i< PacMan.getHealth();i++) {
                 g.drawImage(Images.pacmanRight[0], (handler.getWidth() * 11 / 40 + handler.getHeight() * 39 / 40) + (100*i), handler.getHeight()-handler.getHeight()/4, 64, 64, null);
             }
-//            for (BaseDynamic entity : handler.getMap().getEnemiesOnMap()) {
-//                g.drawRect(entity.getBounds().x,entity.getBounds().y,entity.getBounds().width,entity.getBounds().height);
-//            }
+            g.drawRect(arena.x, arena.y, arena.width, arena.height);
+            for (BaseDynamic entity : handler.getMap().getEnemiesOnMap()) {
+                g.drawRect(entity.getBounds().x,entity.getBounds().y,entity.getBounds().width,entity.getBounds().height);
+            }
 //            for (BaseStatic blocks : handler.getMap().getBlocksOnMap()) {
 //                if(blocks instanceof BoundBlock) {
 //                    g.drawRect(blocks.getRightBounds().x, blocks.getRightBounds().y, blocks.getRightBounds().width, blocks.getRightBounds().height);
+//                    g.drawRect(blocks.getLeftBounds().x, blocks.getLeftBounds().y, blocks.getLeftBounds().width, blocks.getLeftBounds().height);
+////                    g.drawRect(blocks.getTopBounds().x, blocks.getTopBounds().y, blocks.getTopBounds().width, blocks.getTopBounds().height);
+////                    g.drawRect(blocks.getBottomBounds().x, blocks.getBottomBounds().y, blocks.getBottomBounds().width, blocks.getBottomBounds().height);
 //                }
-//            }  USED TO CHECK ENTITY BOUNDS
+//            }  //USED TO CHECK ENTITY BOUNDS
+            g.drawLine(handler.getWidth()/2, 0, handler.getWidth()/2, handler.getHeight());
         }else if (Mode.equals("Menu")){
             g.drawImage(Images.start,handler.getWidth() / 4,0,handler.getWidth()/2,handler.getHeight(),null);
         }else{

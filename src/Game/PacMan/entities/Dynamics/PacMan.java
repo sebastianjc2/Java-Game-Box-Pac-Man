@@ -10,11 +10,12 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-import static Game.PacMan.World.MapBuilder.pixelMultiplier;
+import static Game.GameStates.PacManState.theMap;
+import static Game.PacMan.World.MapBuilder.*;
 
 public class PacMan extends BaseDynamic{
 
-    protected double velX,velY,speed = 1;
+    protected double velX,velY,speed = 1.5;
     public String facing = "Left";
     public boolean moving = true, turnFlag = false, turnRightFlag = false, turnLeftFlag = false, turnUpFlag = false, turnDownFlag = false;
     public Animation leftAnim,rightAnim,upAnim,downAnim, pacmanDeathAnim;
@@ -37,6 +38,9 @@ public class PacMan extends BaseDynamic{
         if (dedcounter<=0) {
             switch (facing) {
                 case "Right":
+                    if (velX != 0){
+                        velX += speed/2;
+                    }
                     x += velX;
                     rightAnim.tick();
                     keepInMiddleY();
@@ -52,6 +56,9 @@ public class PacMan extends BaseDynamic{
                     keepInMiddleX();
                     break;
                 case "Down":
+                    if (velY != 0){
+                        velY += speed/2;
+                    }
                     y += velY;
                     downAnim.tick();
                     keepInMiddleX();
@@ -63,6 +70,7 @@ public class PacMan extends BaseDynamic{
             if (turnFlag) {
                 turnCooldown--;
             }
+
 
             if (handler.getKeyManager().keyHeld(KeyEvent.VK_RIGHT) || handler.getKeyManager().keyHeld(KeyEvent.VK_D)){
                 turnRightFlag = true;
@@ -120,13 +128,20 @@ public class PacMan extends BaseDynamic{
                 dedcounter=60*2;
                 handler.getMusicHandler().playEffect("pacman_death.wav");
             }
+
+            if (x <= centralize - pixelMultiplier/2) {
+                x = centralize + pixelMultiplier * theMap.getWidth() - pixelMultiplier / 2;
+            }
+            else if (x >= centralize + pixelMultiplier * theMap.getWidth() - pixelMultiplier / 2) {
+                x = centralize - pixelMultiplier/2;
+            }
         }
         else {
             pacmanDeathAnim.tick();
             dedcounter--;
             if (pacmanDeathAnim.getIndex()==11) {
-                x = 189 + handler.getWidth() / 4;
-                y = 972;
+                x = pacmanX;
+                y = pacmanY;
                 ded = false;
             }
         }
@@ -264,21 +279,21 @@ public class PacMan extends BaseDynamic{
         int min=1000;
         int calc;
         int block = 0;
-        for (int i = 0; i < Images.map1.getWidth(); i++) {
-            calc = Math.abs((this.x-handler.getWidth() / 4)-i*pixelMultiplier);
+        for (int i = 0; i < theMap.getWidth(); i++) {
+            calc = Math.abs((this.x- centralize)-i*pixelMultiplier);
             if(calc < min) {
                 min = calc;
                 block = i;
             }
         }
-        this.x = block * pixelMultiplier + handler.getWidth() / 4;
+        this.x = block * pixelMultiplier + centralize;
     }
 
     public void keepInMiddleY() {
         int min=1000;
         int calc;
         int block = 0;
-        for (int i = 0; i < Images.map1.getHeight(); i++) {
+        for (int i = 0; i < theMap.getHeight(); i++) {
             calc = Math.abs(this.y-i*pixelMultiplier);
             if(calc < min) {
                 min = calc;
