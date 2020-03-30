@@ -17,7 +17,7 @@ public class PacMan extends BaseDynamic{
     protected double velX,velY,speed = 1;
     public String facing = "Left";
     public boolean moving = true, turnFlag = false, turnRightFlag = false, turnLeftFlag = false, turnUpFlag = false, turnDownFlag = false;
-    public Animation leftAnim,rightAnim,upAnim,downAnim, pacmanDeathAnim;
+    public Animation leftAnim,rightAnim,upAnim,downAnim, pacmanDeathAnim, bigDotBlink;
     int turnCooldown = 20;
     public static int health = 3, dedcounter = 0;
 
@@ -29,11 +29,13 @@ public class PacMan extends BaseDynamic{
         rightAnim = new Animation(128,Images.pacmanRight);
         upAnim = new Animation(128,Images.pacmanUp);
         downAnim = new Animation(128,Images.pacmanDown);
+		bigDotBlink = new Animation(128, Images.bigDotBlink);
         pacmanDeathAnim = new Animation(100,Images.pacmanDeath);
     }
 
     @Override
     public void tick() {
+    	bigDotBlink.tick();
         if (dedcounter<=0) {
             switch (facing) {
                 case "Right":
@@ -130,6 +132,14 @@ public class PacMan extends BaseDynamic{
                 ded = false;
             }
         }
+    	if (handler.getKeyManager().life_up && health != 3){
+			health=health+1;
+		}
+		if(handler.getKeyManager().endLife){ 
+			handler.getMap().reset();
+			health--;
+			ded = true;
+		}
 
     }
 

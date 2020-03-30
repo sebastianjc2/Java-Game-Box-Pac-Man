@@ -28,6 +28,7 @@ public class Images {
     public static BufferedImage[] galagaEnemyBee;
 
     public static BufferedImage map1;
+    public static BufferedImage[] pacmanLogo;
     public static BufferedImage[] pacmanDots;
     public static BufferedImage[] bound;
     public static BufferedImage[] pacmanRight;
@@ -35,6 +36,8 @@ public class Images {
     public static BufferedImage[] pacmanUp;
     public static BufferedImage[] pacmanDown;
     public static BufferedImage[] pacmanDeath;
+    public static BufferedImage[] bigDotBlink;
+
     public static BufferedImage[] ghostBlinkyRight;
     public static BufferedImage[] ghostBlinkyLeft;
     public static BufferedImage[] ghostBlinkyUp;
@@ -74,13 +77,15 @@ public class Images {
         galagaPlayerDeath = new BufferedImage[8];
         galagaEnemyDeath = new BufferedImage[5];
         galagaEnemyBee = new BufferedImage[8];
-
+        
+        pacmanLogo = new BufferedImage[1];
         pacmanDots = new BufferedImage[2];
         bound = new BufferedImage[16];
         pacmanRight = new BufferedImage[2];
         pacmanLeft = new BufferedImage[2];
         pacmanUp = new BufferedImage[2];
         pacmanDown = new BufferedImage[2];
+        bigDotBlink = new BufferedImage[2];
         pacmanDeath = new BufferedImage[12];
         ghostBlinkyRight = new BufferedImage[2];
         ghostBlinkyLeft = new BufferedImage[2];
@@ -164,6 +169,9 @@ public class Images {
 
 
             galagaPlayerLaser = galagaSpriteSheet.crop(365 ,219,3,8);
+            
+            pacmanLogo[0] = ImageIO.read(getClass().getResourceAsStream("/UI/Misc/logo.png"));
+
 
 
 
@@ -205,6 +213,10 @@ public class Images {
 
             pacmanDown[0] = pacmanSpriteSheet.crop(473,48,13,12);
             pacmanDown[1] = pacmanSpriteSheet.crop(489,1,13,13);
+            
+            bigDotBlink[0] = pacmanSpriteSheet.crop(647, 22, 8, 8);
+            bigDotBlink[1] = pacmanSpriteSheet.crop(655, 22, 8, 8);
+
 
             pacmanDeath[0] = pacmanSpriteSheet.crop(489,1,13,13);
             pacmanDeath[1] = pacmanSpriteSheet.crop(505,1,13,13);
