@@ -2,12 +2,14 @@ package Game.PacMan.entities.Dynamics;
 
 import Game.PacMan.entities.Statics.BaseStatic;
 import Main.Handler;
+import Resources.Images;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 
 import static Game.GameStates.PacManState.justStarted;
+import static Game.GameStates.PacManState.theMap;
 import static Game.PacMan.World.MapBuilder.mapInCreation;
 import static Game.PacMan.World.MapBuilder.pixelMultiplier;
 
@@ -16,6 +18,7 @@ public class GhostSpawner extends BaseDynamic{
     public static int[] ghosts = new int[4];
     private static Handler handler;
     private static int x, y;
+    private static Random random = new Random();
 
     public GhostSpawner(int x, int y, int width, int height, Handler handler) {
         super(x ,y , width, height, handler, null);
@@ -25,9 +28,9 @@ public class GhostSpawner extends BaseDynamic{
     }
 
 
-    public void spawnAll(){
+    public static void spawnAll(){
         for (int i = 0; i<ghosts.length; i++) {
-            BaseDynamic newGhost = new Ghost(this.x+2*pixelMultiplier-i*pixelMultiplier, this.y, pixelMultiplier, pixelMultiplier, this.handler, i);
+            BaseDynamic newGhost = new Ghost((theMap == Images.map2) ? (i==0 ? x : x+(i-2)*pixelMultiplier) : x+(i-2)*pixelMultiplier, (theMap == Images.map2) ? (i==0 ? y - pixelMultiplier : y) : y, pixelMultiplier, pixelMultiplier, handler, i);
             mapInCreation.toAdd(newGhost);
             ghosts[i]=1;
         }
@@ -42,22 +45,28 @@ public class GhostSpawner extends BaseDynamic{
         ghosts = new int[4];
     }
 
-    public static void spawn() {
-        for(int i = 0; i < ghosts.length; i++) {
-            if (ghosts[i]==0) {
-                BaseDynamic newGhost = new Ghost(x, y, pixelMultiplier, pixelMultiplier, handler, i);
-                mapInCreation.toAdd(newGhost);
-                ghosts[i]=1;
-                break;
+    public static void spawn(boolean addToArray) {
+        if (addToArray) {
+            for (int i = 0; i < ghosts.length; i++) {
+                if (ghosts[i] == 0) {
+                    BaseDynamic newGhost = new Ghost(x, y, pixelMultiplier, pixelMultiplier, handler, i);
+                    mapInCreation.toAdd(newGhost);
+                    ghosts[i] = 1;
+                    break;
+                }
             }
+        }
+        else {
+            BaseDynamic newGhost = new Ghost(x, y, pixelMultiplier, pixelMultiplier, handler,random.nextInt(4));
+            mapInCreation.toAdd(newGhost);
         }
     }
 
     @Override
     public void tick() {
-//        if (justStarted) {
-//            spawnAll();
-//        }
-//        spawn();
+        if(justStarted) {
+            spawnAll();
+            justStarted = false;
+        }
     }
 }

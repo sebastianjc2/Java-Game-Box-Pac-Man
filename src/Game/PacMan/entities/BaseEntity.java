@@ -33,11 +33,11 @@ public class BaseEntity {
     }
 
     public Rectangle getTopBounds(){
-        return new Rectangle((int)x+dimension.width/6, (int)y-2, 2*dimension.width/3, dimension.height/2+2);
+        return new Rectangle((int)x+dimension.width/6, (int)y-2, 2*dimension.width/3, dimension.height/2);
     }
 
     public Rectangle getBottomBounds(){
-        return new Rectangle((int)x+dimension.width/6, (int)y + dimension.height/2, 2*dimension.width/3, dimension.height/2+2);
+        return new Rectangle((int)x+dimension.width/6, (int)y + dimension.height/2, 2*dimension.width/3, dimension.height/2+3);
     }
 
     public Rectangle getLeftBounds(){

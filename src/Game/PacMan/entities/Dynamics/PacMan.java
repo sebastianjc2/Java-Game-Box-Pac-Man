@@ -150,7 +150,7 @@ public class PacMan extends BaseDynamic{
     	if (handler.getKeyManager().life_up && health != 3){
 			health=health+1;
 		}
-		if(handler.getKeyManager().endLife){ 
+		if(handler.getKeyManager().endLife){
 			handler.getMap().reset();
 			health--;
 			ded = true;
@@ -193,7 +193,6 @@ public class PacMan extends BaseDynamic{
         }
 
         if(pacmanDies) {
-            System.out.println("here??");
             handler.getMap().reset();
             health--;
             ded = true;

@@ -39,6 +39,11 @@ public class PacManState extends State {
     public PacManState(Handler handler){
         super(handler);
         handler.setMap(MapBuilder.createMap(theMap, handler));
+        for (BaseDynamic enemy : handler.getMap().getEnemiesOnMap()) {
+            if (enemy instanceof GhostSpawner) {
+                enemy.tick();
+            }
+        }
     }
 
 
