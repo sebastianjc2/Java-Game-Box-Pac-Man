@@ -44,6 +44,10 @@ public class PacManState extends State {
                 enemy.tick();
             }
         }
+        for (BaseDynamic entity : handler.getMap().getEnemiesToAdd()) {
+            handler.getMap().getEnemiesOnMap().add(entity);
+        }
+        handler.getMap().getEnemiesToAdd().clear();
     }
 
 

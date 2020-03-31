@@ -24,7 +24,7 @@ public class Ghost extends BaseDynamic{
     public Animation leftAnim,rightAnim,upAnim,downAnim, canDieAnim;
     int turnCooldown = 0, scatterCooldown = 0;
     BufferedImage image;
-    int leaveSpawnTimer;
+    int leaveSpawnTimer, ghost;
     boolean goingRandom = false;
 
     public static String[] moves = new String[] {"Right", "Left", "Up", "Down", "None"};
@@ -38,6 +38,7 @@ public class Ghost extends BaseDynamic{
         upAnim = new Animation(128,Images.pacmanUp);
         downAnim = new Animation(128,Images.pacmanDown);
         canDieAnim = new Animation(128,Images.ghostCanDie);
+        this.ghost = ghost;
         switch (ghost){
             case 0:
                 //blinky
@@ -121,9 +122,8 @@ public class Ghost extends BaseDynamic{
             facing = ChaseMode(handler.getPacman().x, handler.getPacman().y, facing);
         }
         else if (moveFlag && !moving) { //if ghost stopped moving (wall between target and ghost) move randomly and then continue chasing
-            facing = simpleGeometry(facing);
+            facing = scatterRandomly(facing);
         }
-
 
 
 
@@ -341,7 +341,7 @@ public class Ghost extends BaseDynamic{
         return moves[index];
     }
 
-    public String simpleGeometry(String facing) {
+    public String scatterRandomly(String facing) {
         double moveProbability = Math.random(), total = 0;
         int[] possibleMoves = new int[4];
         double[] moveWeight = new double[4];
