@@ -9,11 +9,13 @@ import Game.PacMan.entities.Statics.BaseStatic;
 import Game.PacMan.entities.Statics.BigDot;
 import Game.PacMan.entities.Statics.BoundBlock;
 import Game.PacMan.entities.Statics.Dot;
+import Game.PacMan.entities.Statics.Fruit;
 import Main.Handler;
 import Resources.Images;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 public class MapBuilder {
 
@@ -56,8 +58,23 @@ public class MapBuilder {
 					BaseDynamic ghostSpawner = new GhostSpawner(xPos, yPos, pixelMultiplier, pixelMultiplier, handler);
 					mapInCreation.addEnemy(ghostSpawner);
 				}else if(currentPixel == dotC){
-					BaseStatic dot = new Dot(xPos,yPos,pixelMultiplier,pixelMultiplier,handler);
-					mapInCreation.addBlock(dot);
+					Random r = new Random();
+					if(r.nextInt(30) == 1) {
+						if(r.nextInt(2) == 0) {
+							BaseStatic fruit = new Fruit(xPos, yPos, pixelMultiplier, pixelMultiplier, handler);
+							fruit.sprite = Images.fruits[0];
+							mapInCreation.addBlock(fruit);
+						}
+						else {
+							BaseStatic fruit = new Fruit(xPos, yPos, pixelMultiplier, pixelMultiplier, handler);
+							fruit.sprite = Images.fruits[1];
+							mapInCreation.addBlock(fruit);
+						}
+					}
+					else {
+						BaseStatic dot = new Dot(xPos,yPos,pixelMultiplier,pixelMultiplier,handler);
+						mapInCreation.addBlock(dot);
+					}
 				}else if(currentPixel == bigDotC){
 					BaseStatic bigDot = new BigDot(xPos,yPos,pixelMultiplier,pixelMultiplier,handler);
 					mapInCreation.addBlock(bigDot);
@@ -75,27 +92,27 @@ public class MapBuilder {
 		int upPixel;
 		int downPixel;
 		if (i>0) {
-			 leftPixel = mapImage.getRGB(i - 1, j);
+			leftPixel = mapImage.getRGB(i - 1, j);
 		}else{
-			 leftPixel = pacman;
+			leftPixel = pacman;
 
 		}
 		if (i<mapImage.getWidth()-1) {
-			 rightPixel = mapImage.getRGB(i + 1, j);
+			rightPixel = mapImage.getRGB(i + 1, j);
 		}else{
-			 rightPixel= pacman;
+			rightPixel= pacman;
 
 		}
 		if (j>0) {
-			 upPixel = mapImage.getRGB(i, j - 1);
+			upPixel = mapImage.getRGB(i, j - 1);
 		}else{
-			 upPixel = pacman;
+			upPixel = pacman;
 
 		}
 		if (j<mapImage.getHeight()-1) {
-			 downPixel = mapImage.getRGB(i, j + 1);
+			downPixel = mapImage.getRGB(i, j + 1);
 		}else{
-			 downPixel = pacman;
+			downPixel = pacman;
 
 		}
 

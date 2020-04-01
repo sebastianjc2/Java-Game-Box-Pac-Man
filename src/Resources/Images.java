@@ -57,6 +57,7 @@ public class Images {
     public static BufferedImage[] ghostClydeUp;
     public static BufferedImage[] ghostClydeDown;
     public static BufferedImage[] ghostCanDie;
+    public static BufferedImage[] fruits;
     public static BufferedImage intro;
     public static BufferedImage start;
 
@@ -106,6 +107,7 @@ public class Images {
         ghostClydeUp = new BufferedImage[2];
         ghostClydeDown = new BufferedImage[2];
         ghostCanDie = new BufferedImage[4];
+        fruits = new BufferedImage[2];
 
 
 
@@ -219,6 +221,9 @@ public class Images {
             
             bigDotBlink[0] = pacmanSpriteSheet.crop(647, 22, 8, 8);
             bigDotBlink[1] = pacmanSpriteSheet.crop(655, 22, 8, 8);
+            
+            fruits[0] = pacmanSpriteSheet.crop(490, 50, 12, 12);
+            fruits[1] = pacmanSpriteSheet.crop(506, 50, 11, 12);
 
 
             pacmanDeath[0] = pacmanSpriteSheet.crop(489,1,13,13);
