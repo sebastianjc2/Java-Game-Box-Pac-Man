@@ -53,8 +53,8 @@ public class MapBuilder {
 					mapInCreation.addEnemy(PacMan);
 					handler.setPacman((Game.PacMan.entities.Dynamics.PacMan) PacMan);
 				}else if(currentPixel == ghostC){
-					BaseDynamic ghostSpawner = new GhostSpawner(xPos, yPos, pixelMultiplier, pixelMultiplier, handler);
-					mapInCreation.addEnemy(ghostSpawner);
+					BaseStatic ghostSpawner = new GhostSpawner(xPos, yPos, pixelMultiplier, pixelMultiplier, handler);
+					mapInCreation.addBlock(ghostSpawner);
 				}else if(currentPixel == dotC){
 					BaseStatic dot = new Dot(xPos,yPos,pixelMultiplier,pixelMultiplier,handler);
 					mapInCreation.addBlock(dot);

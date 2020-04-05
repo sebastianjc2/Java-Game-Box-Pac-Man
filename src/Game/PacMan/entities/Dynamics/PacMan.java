@@ -31,7 +31,7 @@ public class PacMan extends BaseDynamic{
         upAnim = new Animation(128,Images.pacmanUp);
         downAnim = new Animation(128,Images.pacmanDown);
 		bigDotBlink = new Animation(128, Images.bigDotBlink);
-        pacmanDeathAnim = new Animation(100,Images.pacmanDeath);
+        pacmanDeathAnim = new Animation(128,Images.pacmanDeath);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class PacMan extends BaseDynamic{
             }
 
 
-            if (handler.getKeyManager().keyHeld(KeyEvent.VK_RIGHT) || handler.getKeyManager().keyHeld(KeyEvent.VK_D)){
+            if (handler.getKeyManager().keyHeld(KeyEvent.VK_RIGHT) || handler.getKeyManager().keyHeld(KeyEvent.VK_D)){ //allows holding buttons to move to directions
                 turnRightFlag = true;
             }
             else if (handler.getKeyManager().keyJustReleased(KeyEvent.VK_RIGHT) || handler.getKeyManager().keyJustReleased(KeyEvent.VK_D)) {
@@ -127,7 +127,7 @@ public class PacMan extends BaseDynamic{
             }
 
             if(ded) {
-                dedcounter=60*2;
+                dedcounter=128;
                 handler.getMusicHandler().playEffect("pacman_death.wav");
             }
 
@@ -147,10 +147,10 @@ public class PacMan extends BaseDynamic{
                 ded = false;
             }
         }
-    	if (handler.getKeyManager().life_up && health != 3){
+    	if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_N) && getHealth()<3){
 			health=health+1;
 		}
-		if(handler.getKeyManager().endLife){
+		if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_P) && !ded){
 			handler.getMap().reset();
 			health--;
 			ded = true;
@@ -284,7 +284,7 @@ public class PacMan extends BaseDynamic{
         return true;
     }
 
-    public void keepInMiddleX() {
+    public void keepInMiddleX() { //makes sure pacman cant go halfway into a wall
         int min=1000;
         int calc;
         int block = 0;
@@ -298,7 +298,7 @@ public class PacMan extends BaseDynamic{
         this.x = block * pixelMultiplier + centralize;
     }
 
-    public void keepInMiddleY() {
+    public void keepInMiddleY() { //makes sure pacman cant go halfway into a wall
         int min=1000;
         int calc;
         int block = 0;

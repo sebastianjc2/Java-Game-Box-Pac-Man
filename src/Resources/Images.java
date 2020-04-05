@@ -217,8 +217,8 @@ public class Images {
             pacmanDown[0] = pacmanSpriteSheet.crop(473,48,13,12);
             pacmanDown[1] = pacmanSpriteSheet.crop(489,1,13,13);
             
-            bigDotBlink[0] = pacmanSpriteSheet.crop(647, 22, 8, 8);
-            bigDotBlink[1] = pacmanSpriteSheet.crop(655, 22, 8, 8);
+            bigDotBlink[0] = pacmanSpriteSheet.crop(643, 18, 16, 16);
+            bigDotBlink[1] = pacmanSpriteSheet.crop(663, 18, 16, 16);
 
 
             pacmanDeath[0] = pacmanSpriteSheet.crop(489,1,13,13);

@@ -13,7 +13,7 @@ import static Game.GameStates.PacManState.theMap;
 import static Game.PacMan.World.MapBuilder.mapInCreation;
 import static Game.PacMan.World.MapBuilder.pixelMultiplier;
 
-public class GhostSpawner extends BaseDynamic{
+public class GhostSpawner extends BaseStatic{
 
     public static int[] ghosts = new int[4];
     private static Handler handler;
@@ -59,14 +59,6 @@ public class GhostSpawner extends BaseDynamic{
         else {
             BaseDynamic newGhost = new Ghost(x, y, pixelMultiplier, pixelMultiplier, handler,random.nextInt(4));
             mapInCreation.toAdd(newGhost);
-        }
-    }
-
-    @Override
-    public void tick() {
-        if(justStarted) {
-            spawnAll();
-            justStarted = false;
         }
     }
 }
