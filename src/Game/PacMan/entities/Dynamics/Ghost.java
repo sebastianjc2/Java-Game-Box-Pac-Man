@@ -18,14 +18,15 @@ import static Game.PacMan.World.MapBuilder.*;
 
 public class Ghost extends BaseDynamic{
 
-    protected double velX,velY,speed = 1.5;
+    protected double velX,velY,speed = 1.5, chasing, angle;
     public String facing = "Left";
     public boolean moving = true, moveFlag = false;
     public Animation leftAnim,rightAnim,upAnim,downAnim, canDieAnim;
-    int turnCooldown = 0, scatterCooldown = 0;
+    int turnCooldown = 0;
     BufferedImage image;
-    int leaveSpawnTimer, ghost;
+    int leaveSpawnTimer, ghost, timer;
     boolean goingRandom = false;
+    public int chasingX, chasingY, facingMultiplierX, facingMultiplierY, position;
 
     public static String[] moves = new String[] {"Right", "Left", "Up", "Down", "None"};
 
@@ -49,14 +50,6 @@ public class Ghost extends BaseDynamic{
                 leaveSpawnTimer = 0;
                 break;
             case 1:
-                //inky
-                leftAnim = new Animation(128,Images.ghostInkyLeft);
-                rightAnim = new Animation(128,Images.ghostInkyRight);
-                upAnim = new Animation(128,Images.ghostInkyUp);
-                downAnim = new Animation(128,Images.ghostInkyDown);
-                leaveSpawnTimer = 60*5;
-                break;
-            case 2:
                 //pinky
                 leftAnim = new Animation(128,Images.ghostPinkyLeft);
                 rightAnim = new Animation(128,Images.ghostPinkyRight);
@@ -64,13 +57,21 @@ public class Ghost extends BaseDynamic{
                 downAnim = new Animation(128,Images.ghostPinkyDown);
                 leaveSpawnTimer = 60*10;
                 break;
+            case 2:
+                //inky
+                leftAnim = new Animation(128,Images.ghostInkyLeft);
+                rightAnim = new Animation(128,Images.ghostInkyRight);
+                upAnim = new Animation(128,Images.ghostInkyUp);
+                downAnim = new Animation(128,Images.ghostInkyDown);
+                leaveSpawnTimer = 60*20;
+                break;
             case 3:
                 //clyde
                 leftAnim = new Animation(128,Images.ghostClydeLeft);
                 rightAnim = new Animation(128,Images.ghostClydeRight);
                 upAnim = new Animation(128,Images.ghostClydeUp);
                 downAnim = new Animation(128,Images.ghostClydeDown);
-                leaveSpawnTimer = 60*15;
+                leaveSpawnTimer = 60*30;
                 break;
         }
 
@@ -107,6 +108,65 @@ public class Ghost extends BaseDynamic{
                 keepInMiddleX();
                 break;
         }
+
+        if(this.ghost == 0) { //chase pacman
+            chasingX = handler.getPacman().x;
+            chasingY = handler.getPacman().y;
+        } else if (this.ghost == 1){ //chase 4 tiles in front of pacman
+            if (handler.getPacman().facing == "Right") {
+                facingMultiplierX = 1;
+                facingMultiplierY = 0;
+            } else if (handler.getPacman().facing.equals("Left")) {
+                facingMultiplierX = -1;
+                facingMultiplierY = 0;
+            } else if (handler.getPacman().facing.equals("Up")) {
+                facingMultiplierX = 0;
+                facingMultiplierY = -1;
+            } else {
+                facingMultiplierX = 0;
+                facingMultiplierY = 1;
+            }
+            chasingX = handler.getPacman().x + 4*pixelMultiplier*facingMultiplierX;
+            chasingY = handler.getPacman().y + 4*pixelMultiplier*facingMultiplierY;
+        } else if (this.ghost == 2) { //looks 2 tiles ahead of pacman, makes a vector from blinky to that tile, doubles vector, the end of that vector is the target (yes thats how inky was calculated originally, pretty cool)
+            if (handler.getPacman().facing == "Right") {
+                facingMultiplierX = 1;
+                facingMultiplierY = 0;
+            } else if (handler.getPacman().facing.equals("Left")) {
+                facingMultiplierX = -1;
+                facingMultiplierY = 0;
+            } else if (handler.getPacman().facing.equals("Up")) {
+                facingMultiplierX = 0;
+                facingMultiplierY = -1;
+            } else {
+                facingMultiplierX = 0;
+                facingMultiplierY = 1;
+            }
+            chasingX = handler.getPacman().x + 2*pixelMultiplier*facingMultiplierX;
+            chasingY = handler.getPacman().y + 2*pixelMultiplier*facingMultiplierY;
+
+            for (BaseDynamic enemy : handler.getMap().getEnemiesOnMap()) {
+                if (enemy instanceof Ghost) {
+                    if (((Ghost) enemy).ghost == 0) {
+                        chasing = 2 * Point.distance(enemy.x, enemy.y, chasingX, chasingY); //getting distance vector and doubling it
+                        angle = Math.atan2(enemy.y - chasingY, enemy.x - chasingX);
+
+                        chasingX = ((int) (chasing * Math.cos(angle)*-1)) + enemy.x; //since the vector starts at blinky, it must take into account his position
+                        chasingY = ((int) (chasing * Math.sin(angle)*-1)) + enemy.y;
+                    }
+                }
+            }
+        } else { //clyde chases pacman until he gets close, then he hides in a corner, strange behavior but I'll still leave it like that
+            if (Point.distance(this.x, this.y, handler.getPacman().x, handler.getPacman().y) < 8*pixelMultiplier) {
+                chasingX = centralize + pixelMultiplier;
+                chasingY = handler.getHeight() + 4 * pixelMultiplier;
+            } else {
+                chasingX = handler.getPacman().x;
+                chasingY = handler.getPacman().y;
+            }
+        }
+
+
         if(leaveSpawnTimer<=0 && !moveFlag){ //while in spawn, idle, once its time, leave
             facing = leaveSpawn();
             if (!arena.getBounds().intersects(this.getBounds())){
@@ -118,14 +178,17 @@ public class Ghost extends BaseDynamic{
             leaveSpawnTimer--;
         }
 
-        if (moveFlag && moving && scatterCooldown<=0 && othersAvailable(facing) && !goingRandom) {  //once out of spawn start moving
-            facing = ChaseMode(handler.getPacman().x, handler.getPacman().y, facing);
+
+        if (moveFlag && moving && othersAvailable(facing) && turnCooldown<=0) {  //once out of spawn start chasing (unless you're clyde, in that case just scatter)
+            facing = ChaseMode(chasingX, chasingY, facing);
+            turnCooldown = 10;
+            position = 0;
         }
         else if (moveFlag && !moving) { //if ghost stopped moving (wall between target and ghost) move randomly and then continue chasing
             facing = scatterRandomly(facing);
+            turnCooldown = 10;
+            position = 1;
         }
-
-
 
         if (facing.equals("Right") || facing.equals("Left")) {
             checkHorizontalCollision();
@@ -133,10 +196,11 @@ public class Ghost extends BaseDynamic{
             checkVerticalCollisions();
         }
 
-        if (inChaseMode(PacManState.timer)) {
-            //do something eventually
+        if (moveFlag) {
+            timer++;
         }
 
+        turnCooldown--;
     }
 
 
@@ -276,14 +340,7 @@ public class Ghost extends BaseDynamic{
         return true;
     }
 
-    public boolean inChaseMode(int timer) {
-        if ((timer >= 60*0 && timer <60*7) || (timer >= 60*27 && timer < 60*34) || (timer >= 60*54 && timer < 60*59) || (timer >= 60*79 && timer < 60*84)){
-            return false; //scatter mode
-        }
-        return true; //chase mode
-    }
-
-    public void keepInMiddleX() {
+    public void keepInMiddleX() { //makes sure ghosts cant go halfway into a wall
         int min=1000;
         int calc;
         int block = 0;
@@ -297,7 +354,7 @@ public class Ghost extends BaseDynamic{
         this.x = block * pixelMultiplier + centralize;
     }
 
-    public void keepInMiddleY() {
+    public void keepInMiddleY() { //makes sure ghosts cant go halfway into a wall
         int min = 1000;
         int calc;
         int block = 0;
@@ -311,7 +368,7 @@ public class Ghost extends BaseDynamic{
         this.y = block * pixelMultiplier;
     }
 
-    public String ChaseMode(int chaseX, int chaseY, String facing) {
+    public String ChaseMode(int chaseX, int chaseY, String facing) { //chases the coordinate (chaseX, chaseY)
         int xDistance, yDistance, index = 0, notGoingBack;
         double distance, moveProbability = 0;
         int[] possibleMoves = new int[4];
@@ -336,24 +393,24 @@ public class Ghost extends BaseDynamic{
                 moveProbability = moveWeight[i];
                 index = i;
             }
-
         }
         return moves[index];
     }
 
-    public String scatterRandomly(String facing) {
-        double moveProbability = Math.random(), total = 0;
+    public String scatterRandomly(String facing) { //self explanatory, move randomly
+        double moveProbability = Math.random(), total = 0, notGoingBack;
         int[] possibleMoves = new int[4];
         double[] moveWeight = new double[4];
 
+        notGoingBack = dontTurnBack(facing);
 
         for (int i = 0; i < possibleMoves.length; i++) {
-            if (i < 2 && !(moves[0].equals(facing) || moves[1].equals(facing))) {
+            if (i < 2 && i!=notGoingBack) {
                 possibleMoves[i] = checkPreHorizontalCollisions(moves[i]) ? 1 : 0;
                 if (possibleMoves[i] == 1) {
                     total++;
                 }
-            } else if (i >= 2 && !(moves[2].equals(facing) || moves[3].equals(facing))) {
+            } else if (i >= 2 && i!=notGoingBack) {
                 possibleMoves[i] = checkPreVerticalCollisions(moves[i]) ? 1 : 0;
                 if (possibleMoves[i] == 1) {
                     total++;
@@ -361,15 +418,11 @@ public class Ghost extends BaseDynamic{
             }
         }
         for (int i = 0; i < possibleMoves.length; i++) {
-            if (i < 2) {
-                moveWeight[i] = possibleMoves[i] * (1 / total);
+            moveWeight[i] = possibleMoves[i] * (1 / total);
+            if (moveProbability < moveWeight[i]) {
+                return moves[i];
             } else {
-                moveWeight[i] = possibleMoves[i] * (1 / total);
-                if (moveProbability < moveWeight[i]) {
-                    return moves[i];
-                } else {
-                    moveProbability -= moveWeight[i];
-                }
+                moveProbability -= moveWeight[i];
             }
         }
         return "?";
@@ -398,7 +451,7 @@ public class Ghost extends BaseDynamic{
         return "Down";
     }
 
-    public boolean othersAvailable(String facing) {
+    public boolean othersAvailable(String facing) { //if going up or down, checks if a move to the left or right is available and vice versa
         if (facing.equals(moves[0]) || facing.equals(moves[1])) {
             if (checkPreVerticalCollisions(moves[2]) || checkPreVerticalCollisions(moves[3])) {
                 return true;

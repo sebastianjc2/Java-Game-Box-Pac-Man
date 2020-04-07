@@ -226,6 +226,9 @@ public class Images {
             
             fruits[0] = pacmanSpriteSheet.crop(490, 50, 12, 12);
             fruits[1] = pacmanSpriteSheet.crop(506, 50, 11, 12);
+            
+            bigDotBlink[0] = pacmanSpriteSheet.crop(643, 18, 16, 16);
+            bigDotBlink[1] = pacmanSpriteSheet.crop(663, 18, 16, 16);
 
 
             pacmanDeath[0] = pacmanSpriteSheet.crop(489,1,13,13);
