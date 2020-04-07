@@ -32,8 +32,9 @@ public class PacManState extends State {
 	private Animation titleAnimation;
 	public String Mode = "Intro";
 	public int startCooldown = 60*4;//seven seconds for the music to finish
-	public static boolean justStarted = true;
+	public static boolean justStarted = true, isVulnerable = false;
 	public static BufferedImage theMap = Images.map1;
+	public static int isVulnerableCooldown = 0;
 	int digits;
 
 
@@ -64,6 +65,8 @@ public class PacManState extends State {
 								handler.getMusicHandler().playEffect("pacman_chomp.wav");
 								toREmove.add(blocks);
 								handler.getScoreManager().addPacmanCurrentScore(100);
+								isVulnerableCooldown= 60*5;
+								isVulnerable = true;
 
 							}
 						}
@@ -91,6 +94,12 @@ public class PacManState extends State {
                     if (handler.getScoreManager().getPacmanCurrentScore() > handler.getScoreManager().getPacmanHighScore()) {
                         handler.getScoreManager().setPacmanHighScore(handler.getScoreManager().getPacmanCurrentScore());
                     }
+                    
+                    if(isVulnerableCooldown<= 0) {
+                    	isVulnerable=false;
+                    }
+                    
+                    isVulnerableCooldown--;
 
 				} else {
 					startCooldown--;

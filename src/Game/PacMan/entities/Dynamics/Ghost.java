@@ -17,11 +17,13 @@ import static Game.GameStates.PacManState.theMap;
 import static Game.PacMan.World.MapBuilder.*;
 
 public class Ghost extends BaseDynamic{
-
-    protected double velX,velY,speed = 1.5, chasing, angle;
+	
+	
+	public static boolean ghostDies = false;
+    protected double velX,velY,speed = 1, chasing, angle;
     public String facing = "Left";
     public boolean moving = true, moveFlag = false;
-    public Animation leftAnim,rightAnim,upAnim,downAnim, canDieAnim;
+    public Animation leftAnim,rightAnim,upAnim,downAnim, canDieAnim, edibleGhostsAnim;
     int turnCooldown = 0;
     BufferedImage image;
     int leaveSpawnTimer, ghost, timer;
@@ -39,6 +41,7 @@ public class Ghost extends BaseDynamic{
         upAnim = new Animation(128,Images.pacmanUp);
         downAnim = new Animation(128,Images.pacmanDown);
         canDieAnim = new Animation(128,Images.ghostCanDie);
+        edibleGhostsAnim = new Animation(129, Images.edibleGhosts);
         this.ghost = ghost;
         switch (ghost){
             case 0:
@@ -80,6 +83,10 @@ public class Ghost extends BaseDynamic{
 
     @Override
     public void tick(){
+    	handler.getPacManState();
+    	if(PacManState.isVulnerable) {
+    		edibleGhostsAnim.tick();
+    	}
         switch (facing){
             case "Right":
                 if (velX != 0){
@@ -210,7 +217,7 @@ public class Ghost extends BaseDynamic{
         ArrayList<BaseStatic> bricks = handler.getMap().getBlocksOnMap();
         ArrayList<BaseDynamic> enemies = handler.getMap().getEnemiesOnMap();
 
-        boolean ghostDies = false;
+        ghostDies = false;
         boolean toUp = facing.equals("Up");
 
         Rectangle ghostBounds = toUp ? ghost.getTopBounds() : ghost.getBottomBounds();
@@ -239,7 +246,7 @@ public class Ghost extends BaseDynamic{
 
         for(BaseDynamic enemy : enemies){
             Rectangle enemyBounds = !toUp ? enemy.getTopBounds() : enemy.getBottomBounds();
-            if (ghostBounds.intersects(enemyBounds) && !(enemy instanceof Ghost)) {
+            if (ghostBounds.intersects(enemyBounds) && !(enemy instanceof Ghost) && PacManState.isVulnerable == true) {
                 ghostDies = true;
                 break;
             }
@@ -247,6 +254,8 @@ public class Ghost extends BaseDynamic{
 
         if(ghostDies) {
             handler.getMap().reset();
+            handler.getMusicHandler().playEffect("pacman_eatghost.wav");
+            ded = true;
         }
     }
 
@@ -255,7 +264,7 @@ public class Ghost extends BaseDynamic{
         Ghost ghost = this;
         ArrayList<BaseStatic> bricks = handler.getMap().getBlocksOnMap();
 
-        boolean ghostDies = false;
+        ghostDies = false;
         boolean toUp = facing.equals("Up");
 
         Rectangle ghostBounds = toUp ? ghost.getTopBounds() : ghost.getBottomBounds();
@@ -284,7 +293,7 @@ public class Ghost extends BaseDynamic{
         ArrayList<BaseStatic> bricks = handler.getMap().getBlocksOnMap();
         ArrayList<BaseDynamic> enemies = handler.getMap().getEnemiesOnMap();
         velX = speed;
-        boolean ghostDies = false;
+        ghostDies = false;
         boolean toRight = facing.equals("Right");
 
         Rectangle ghostBounds = toRight ? ghost.getRightBounds() : ghost.getLeftBounds();
@@ -292,7 +301,7 @@ public class Ghost extends BaseDynamic{
         for(BaseDynamic enemy : enemies) {
             if (!(enemy instanceof Ghost)) {
                 Rectangle enemyBounds = !toRight ? enemy.getRightBounds() : enemy.getLeftBounds();
-                if (ghost.getBounds().intersects(enemyBounds)) {
+                if (ghost.getBounds().intersects(enemyBounds) && PacManState.isVulnerable==true) {
                     ghostDies = true;
                     break;
                 }
@@ -301,6 +310,8 @@ public class Ghost extends BaseDynamic{
 
         if(ghostDies) {
             handler.getMap().reset();
+            handler.getMusicHandler().playEffect("pacman_eatghost.wav");
+            ded = true;
         }else {
 
             for (BaseStatic brick : bricks) {

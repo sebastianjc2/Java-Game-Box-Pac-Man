@@ -1,5 +1,6 @@
 package Game.PacMan.World;
 
+import Game.GameStates.PacManState;
 import Game.PacMan.entities.Dynamics.BaseDynamic;
 import Game.PacMan.entities.Dynamics.Ghost;
 import Game.PacMan.entities.Dynamics.PacMan;
@@ -76,6 +77,11 @@ public class Map {
 				}
 			}
 			else if (entity instanceof Ghost) {
+				handler.getPacManState();
+				if(PacManState.isVulnerable) {
+					g2.drawImage(((Ghost) entity).edibleGhostsAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
+				}
+				else {
 					switch (((Ghost) entity).facing) {
 					case "Right":
 						g2.drawImage(((Ghost) entity).rightAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
@@ -90,7 +96,7 @@ public class Map {
 						g2.drawImage(((Ghost) entity).downAnim.getCurrentFrame(), entity.x, entity.y, entity.width, entity.height, null);
 						break;
 					}
-				
+				}
 			}
 
 			else {
