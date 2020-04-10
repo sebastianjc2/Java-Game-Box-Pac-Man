@@ -1,30 +1,34 @@
 package Game.GameStates;
 
+import static Game.PacMan.World.MapBuilder.centralize;
+import static Game.PacMan.World.MapBuilder.pixelMultiplier;
+import static Game.PacMan.entities.Dynamics.GhostSpawner.killAll;
+import static Game.PacMan.entities.Dynamics.GhostSpawner.spawn;
+import static Game.PacMan.entities.Dynamics.GhostSpawner.spawnAll;
+import static Game.PacMan.entities.Dynamics.PacMan.dedcounter;
+import static Game.PacMan.entities.Dynamics.PacMan.setHealth;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Random;
+
 import Display.UI.UIManager;
-import Game.Galaga.Entities.BaseEntity;
 import Game.PacMan.World.MapBuilder;
 import Game.PacMan.entities.Dynamics.BaseDynamic;
 import Game.PacMan.entities.Dynamics.Ghost;
-import Game.PacMan.entities.Dynamics.GhostSpawner;
 import Game.PacMan.entities.Dynamics.PacMan;
 import Game.PacMan.entities.Statics.BaseStatic;
 import Game.PacMan.entities.Statics.BigDot;
-import Game.PacMan.entities.Statics.BoundBlock;
 import Game.PacMan.entities.Statics.Dot;
 import Game.PacMan.entities.Statics.Fruit;
 import Main.Handler;
 import Resources.Animation;
 import Resources.Images;
-
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-
-import static Game.PacMan.entities.Dynamics.GhostSpawner.*;
-import static Game.PacMan.World.MapBuilder.*;
-import static Game.PacMan.entities.Dynamics.PacMan.*;
 
 public class PacManState extends State {
 
@@ -43,6 +47,13 @@ public class PacManState extends State {
 
 	public PacManState(Handler handler){
 		super(handler);
+		Random mapChooser = new Random();
+		if(mapChooser.nextInt(2)==1) {
+			theMap = Images.map1;
+		}
+		else {
+			theMap = Images.map2;
+		}
 		handler.setMap(MapBuilder.createMap(theMap, handler));
 	}
 
