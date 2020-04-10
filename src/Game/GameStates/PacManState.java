@@ -178,6 +178,7 @@ public class PacManState extends State {
                     if (addEdibles() == 0 || handler.getKeyManager().keyJustPressed((KeyEvent.VK_B))) {
                     	Mode = "Menu";
                     	changeMap = true;
+                    	isVulnerable = false;
 						killAll(true);
 						toRemove();
 					}

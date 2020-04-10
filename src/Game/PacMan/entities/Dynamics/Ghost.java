@@ -19,8 +19,8 @@ import static Game.PacMan.entities.Dynamics.GhostSpawner.ghosts;
 
 public class Ghost extends BaseDynamic{
 	
-	
-	public static boolean ghostDies = false;
+
+	public static boolean ghostDies = false, leaving = false;
     protected double velX,velY,speed = 2, chasing, angle;
     public String facing = "Left";
     public boolean moving = true, moveFlag = false;
@@ -187,9 +187,11 @@ public class Ghost extends BaseDynamic{
 
 
         if(leaveSpawnTimer<=0 && !moveFlag){ //while in spawn, idle, once its time, leave
+            leaving = true;
             facing = leaveSpawn();
             if (!arena.getBounds().intersects(this.getBounds())){
                 moveFlag = true;
+                leaving = false;
             }
         }
         else if (!moveFlag){
@@ -247,6 +249,12 @@ public class Ghost extends BaseDynamic{
             ghost.setY(arena.y - ghost.getDimension().height);
         }
 
+        if(ghost.getBounds().intersects(arena.getTopBounds()) && !moveFlag && toUp && !leaving) {
+            velY = 0;
+            moving = false;
+            ghost.setY(arena.y);
+        }
+
         for (BaseStatic brick : bricks) {
             if (brick instanceof BoundBlock) {
                 Rectangle brickBounds = !toUp ? brick.getTopBounds() : brick.getBottomBounds();
@@ -271,6 +279,7 @@ public class Ghost extends BaseDynamic{
 
         if(ghostDies) {
             handler.getMap().reset();
+            handler.getScoreManager().addPacmanCurrentScore(500);
             handler.getMusicHandler().playEffect("pacman_eatghost.wav");
             ded = true;
             ghosts[this.ghost] = 0;
@@ -328,6 +337,7 @@ public class Ghost extends BaseDynamic{
 
         if(ghostDies) {
             handler.getMap().reset();
+            handler.getScoreManager().addPacmanCurrentScore(500);
             handler.getMusicHandler().playEffect("pacman_eatghost.wav");
             ded = true;
             ghosts[this.ghost] = 0;
