@@ -20,7 +20,8 @@ public class Ghost extends BaseDynamic{
 	
 	
 	public static boolean ghostDies = false;
-    protected double velX,velY,speed = 1, chasing, angle;
+	Random speedChooser = new Random();
+    protected double velX,velY,speed = speedChooser.nextInt(2)+1 , chasing, angle;
     public String facing = "Left";
     public boolean moving = true, moveFlag = false;
     public Animation leftAnim,rightAnim,upAnim,downAnim, canDieAnim, edibleGhostsAnim;
@@ -256,6 +257,7 @@ public class Ghost extends BaseDynamic{
             handler.getMap().reset();
             handler.getMusicHandler().playEffect("pacman_eatghost.wav");
             ded = true;
+            handler.getScoreManager().addPacmanCurrentScore(500);
         }
     }
 
@@ -312,6 +314,7 @@ public class Ghost extends BaseDynamic{
             handler.getMap().reset();
             handler.getMusicHandler().playEffect("pacman_eatghost.wav");
             ded = true;
+            handler.getScoreManager().addPacmanCurrentScore(500);
         }else {
 
             for (BaseStatic brick : bricks) {
