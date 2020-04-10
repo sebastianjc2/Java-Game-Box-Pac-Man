@@ -15,19 +15,19 @@ import java.util.Random;
 
 import static Game.GameStates.PacManState.theMap;
 import static Game.PacMan.World.MapBuilder.*;
+import static Game.PacMan.entities.Dynamics.GhostSpawner.ghosts;
 
 public class Ghost extends BaseDynamic{
 	
 	
 	public static boolean ghostDies = false;
-    protected double velX,velY,speed = 1, chasing, angle;
+    protected double velX,velY,speed = 2, chasing, angle;
     public String facing = "Left";
     public boolean moving = true, moveFlag = false;
-    public Animation leftAnim,rightAnim,upAnim,downAnim, canDieAnim, edibleGhostsAnim;
+    public Animation leftAnim,rightAnim,upAnim,downAnim, edibleGhostsAnim;
     int turnCooldown = 0;
     BufferedImage image;
     int leaveSpawnTimer, ghost, timer;
-    boolean goingRandom = false;
     public int chasingX, chasingY, facingMultiplierX, facingMultiplierY, position;
 
     public static String[] moves = new String[] {"Right", "Left", "Up", "Down", "None"};
@@ -40,8 +40,7 @@ public class Ghost extends BaseDynamic{
         rightAnim = new Animation(128,Images.pacmanRight);
         upAnim = new Animation(128,Images.pacmanUp);
         downAnim = new Animation(128,Images.pacmanDown);
-        canDieAnim = new Animation(128,Images.ghostCanDie);
-        edibleGhostsAnim = new Animation(129, Images.edibleGhosts);
+        edibleGhostsAnim = new Animation(128, Images.edibleGhosts);
         this.ghost = ghost;
         switch (ghost){
             case 0:
@@ -89,9 +88,6 @@ public class Ghost extends BaseDynamic{
     	}
         switch (facing){
             case "Right":
-                if (velX != 0){
-                    velX += speed/2;
-                }
                 x+=velX;
                 rightAnim.tick();
                 keepInMiddleY();
@@ -107,69 +103,85 @@ public class Ghost extends BaseDynamic{
                 keepInMiddleX();
                 break;
             case "Down":
-                if (velY != 0){
-                    velY += speed/2;
-                }
                 y+=velY;
                 downAnim.tick();
                 keepInMiddleX();
                 break;
         }
 
-        if(this.ghost == 0) { //chase pacman
-            chasingX = handler.getPacman().x;
-            chasingY = handler.getPacman().y;
-        } else if (this.ghost == 1){ //chase 4 tiles in front of pacman
-            if (handler.getPacman().facing == "Right") {
-                facingMultiplierX = 1;
-                facingMultiplierY = 0;
-            } else if (handler.getPacman().facing.equals("Left")) {
-                facingMultiplierX = -1;
-                facingMultiplierY = 0;
-            } else if (handler.getPacman().facing.equals("Up")) {
-                facingMultiplierX = 0;
-                facingMultiplierY = -1;
+    	if (this.ghost == 0) { //chase or run from pacman
+            if (PacManState.isVulnerable || !inChaseMode(timer)) {
+                chasingX = centralize + pixelMultiplier;
+                chasingY = 0 - 4 * pixelMultiplier;
             } else {
-                facingMultiplierX = 0;
-                facingMultiplierY = 1;
+                chasingX = handler.getPacman().x;
+                chasingY = handler.getPacman().y;
             }
-            chasingX = handler.getPacman().x + 4*pixelMultiplier*facingMultiplierX;
-            chasingY = handler.getPacman().y + 4*pixelMultiplier*facingMultiplierY;
+        } else if (this.ghost == 1) { //chase 4 tiles in front of pacman
+            if (PacManState.isVulnerable || !inChaseMode(timer)) {
+                chasingX = centralize + pixelMultiplier * theMap.getWidth();
+                chasingY = 0 - 4 * pixelMultiplier;
+            } else {
+                if (handler.getPacman().facing == "Right") {
+                    facingMultiplierX = 1;
+                    facingMultiplierY = 0;
+                } else if (handler.getPacman().facing.equals("Left")) {
+                    facingMultiplierX = -1;
+                    facingMultiplierY = 0;
+                } else if (handler.getPacman().facing.equals("Up")) {
+                    facingMultiplierX = 0;
+                    facingMultiplierY = -1;
+                } else {
+                    facingMultiplierX = 0;
+                    facingMultiplierY = 1;
+                }
+                chasingX = handler.getPacman().x + 4 * pixelMultiplier * facingMultiplierX;
+                chasingY = handler.getPacman().y + 4 * pixelMultiplier * facingMultiplierY;
+            }
         } else if (this.ghost == 2) { //looks 2 tiles ahead of pacman, makes a vector from blinky to that tile, doubles vector, the end of that vector is the target (yes thats how inky was calculated originally, pretty cool)
-            if (handler.getPacman().facing == "Right") {
-                facingMultiplierX = 1;
-                facingMultiplierY = 0;
-            } else if (handler.getPacman().facing.equals("Left")) {
-                facingMultiplierX = -1;
-                facingMultiplierY = 0;
-            } else if (handler.getPacman().facing.equals("Up")) {
-                facingMultiplierX = 0;
-                facingMultiplierY = -1;
+            if (PacManState.isVulnerable || !inChaseMode(timer)) {
+                chasingX = centralize + pixelMultiplier * theMap.getWidth();
+                chasingY = handler.getHeight() + 4 * pixelMultiplier;
             } else {
-                facingMultiplierX = 0;
-                facingMultiplierY = 1;
+                if (handler.getPacman().facing == "Right") {
+                    facingMultiplierX = 1;
+                    facingMultiplierY = 0;
+                } else if (handler.getPacman().facing.equals("Left")) {
+                    facingMultiplierX = -1;
+                    facingMultiplierY = 0;
+                } else if (handler.getPacman().facing.equals("Up")) {
+                    facingMultiplierX = 0;
+                    facingMultiplierY = -1;
+                } else {
+                    facingMultiplierX = 0;
+                    facingMultiplierY = 1;
+                }
+                chasingX = handler.getPacman().x + 2 * pixelMultiplier * facingMultiplierX;
+                chasingY = handler.getPacman().y + 2 * pixelMultiplier * facingMultiplierY;
             }
-            chasingX = handler.getPacman().x + 2*pixelMultiplier*facingMultiplierX;
-            chasingY = handler.getPacman().y + 2*pixelMultiplier*facingMultiplierY;
-
             for (BaseDynamic enemy : handler.getMap().getEnemiesOnMap()) {
                 if (enemy instanceof Ghost) {
                     if (((Ghost) enemy).ghost == 0) {
                         chasing = 2 * Point.distance(enemy.x, enemy.y, chasingX, chasingY); //getting distance vector and doubling it
                         angle = Math.atan2(enemy.y - chasingY, enemy.x - chasingX);
 
-                        chasingX = ((int) (chasing * Math.cos(angle)*-1)) + enemy.x; //since the vector starts at blinky, it must take into account his position
-                        chasingY = ((int) (chasing * Math.sin(angle)*-1)) + enemy.y;
+                        chasingX = ((int) (chasing * Math.cos(angle) * -1)) + enemy.x; //since the vector starts at blinky, it must take into account his position
+                        chasingY = ((int) (chasing * Math.sin(angle) * -1)) + enemy.y;
                     }
                 }
             }
         } else { //clyde chases pacman until he gets close, then he hides in a corner, strange behavior but I'll still leave it like that
-            if (Point.distance(this.x, this.y, handler.getPacman().x, handler.getPacman().y) < 8*pixelMultiplier) {
+            if (PacManState.isVulnerable || !inChaseMode(timer)) {
                 chasingX = centralize + pixelMultiplier;
                 chasingY = handler.getHeight() + 4 * pixelMultiplier;
             } else {
-                chasingX = handler.getPacman().x;
-                chasingY = handler.getPacman().y;
+                if (Point.distance(this.x, this.y, handler.getPacman().x, handler.getPacman().y) < 8 * pixelMultiplier) {
+                   chasingX = centralize + pixelMultiplier;
+                   chasingY = handler.getHeight() + 4 * pixelMultiplier;
+                } else {
+                    chasingX = handler.getPacman().x;
+                    chasingY = handler.getPacman().y;
+                }
             }
         }
 
@@ -185,13 +197,11 @@ public class Ghost extends BaseDynamic{
             leaveSpawnTimer--;
         }
 
-
-        if (moveFlag && moving && othersAvailable(facing) && turnCooldown<=0) {  //once out of spawn start chasing (unless you're clyde, in that case just scatter)
+        if (moveFlag && moving && othersAvailable(facing) && turnCooldown <= 0) {  //once out of spawn start chasing target
             facing = ChaseMode(chasingX, chasingY, facing);
             turnCooldown = 10;
             position = 0;
-        }
-        else if (moveFlag && !moving) { //if ghost stopped moving (wall between target and ghost) move randomly and then continue chasing
+        } else if (moveFlag && !moving) { //if ghost stopped moving (wall between target and ghost) move randomly and then continue chasing
             facing = scatterRandomly(facing);
             turnCooldown = 10;
             position = 1;
@@ -201,6 +211,13 @@ public class Ghost extends BaseDynamic{
             checkHorizontalCollision();
         } else {
             checkVerticalCollisions();
+        }
+
+        if (x <= centralize - pixelMultiplier/2) {
+            x = centralize + pixelMultiplier * theMap.getWidth() - pixelMultiplier / 2;
+        }
+        else if (x >= centralize + pixelMultiplier * theMap.getWidth() - pixelMultiplier / 2) {
+            x = centralize - pixelMultiplier/2;
         }
 
         if (moveFlag) {
@@ -220,7 +237,7 @@ public class Ghost extends BaseDynamic{
         ghostDies = false;
         boolean toUp = facing.equals("Up");
 
-        Rectangle ghostBounds = toUp ? ghost.getTopBounds() : ghost.getBottomBounds();
+        Rectangle ghostBounds = new Rectangle (ghost.x + ghost.width/8, ghost.y + ghost.height/8, 3*ghost.width/4, 3*ghost.height/4);
 
         velY = speed;
 
@@ -245,8 +262,8 @@ public class Ghost extends BaseDynamic{
         }
 
         for(BaseDynamic enemy : enemies){
-            Rectangle enemyBounds = !toUp ? enemy.getTopBounds() : enemy.getBottomBounds();
-            if (ghostBounds.intersects(enemyBounds) && !(enemy instanceof Ghost) && PacManState.isVulnerable == true) {
+            Rectangle enemyBounds = new Rectangle (enemy.x + enemy.width/8, enemy.y + enemy.height/8, 3*enemy.width/4, 3*enemy.height/4);
+            if (ghostBounds.intersects(enemyBounds) && enemy instanceof PacMan && PacManState.isVulnerable == true) {
                 ghostDies = true;
                 break;
             }
@@ -256,6 +273,7 @@ public class Ghost extends BaseDynamic{
             handler.getMap().reset();
             handler.getMusicHandler().playEffect("pacman_eatghost.wav");
             ded = true;
+            ghosts[this.ghost] = 0;
         }
     }
 
@@ -296,12 +314,12 @@ public class Ghost extends BaseDynamic{
         ghostDies = false;
         boolean toRight = facing.equals("Right");
 
-        Rectangle ghostBounds = toRight ? ghost.getRightBounds() : ghost.getLeftBounds();
+        Rectangle ghostBounds = new Rectangle (ghost.x + ghost.width/8, ghost.y + ghost.height/8, 3*ghost.width/4, 3*ghost.height/4);
 
         for(BaseDynamic enemy : enemies) {
             if (!(enemy instanceof Ghost)) {
-                Rectangle enemyBounds = !toRight ? enemy.getRightBounds() : enemy.getLeftBounds();
-                if (ghost.getBounds().intersects(enemyBounds) && PacManState.isVulnerable==true) {
+                Rectangle enemyBounds = new Rectangle (enemy.x + enemy.width/8, enemy.y + enemy.height/8, 3*enemy.width/4, 3*enemy.height/4);
+                if (ghostBounds.intersects(enemyBounds) && PacManState.isVulnerable==true) {
                     ghostDies = true;
                     break;
                 }
@@ -312,12 +330,13 @@ public class Ghost extends BaseDynamic{
             handler.getMap().reset();
             handler.getMusicHandler().playEffect("pacman_eatghost.wav");
             ded = true;
+            ghosts[this.ghost] = 0;
         }else {
 
             for (BaseStatic brick : bricks) {
                 if (brick instanceof BoundBlock) {
                     Rectangle brickBounds = !toRight ? brick.getRightBounds() : brick.getLeftBounds();
-                    if (ghostBounds.intersects(brickBounds)) {
+                    if (ghost.getBounds().intersects(brickBounds)) {
                         velX = 0;
                         moving = false;
                         if (toRight)
@@ -352,31 +371,35 @@ public class Ghost extends BaseDynamic{
     }
 
     public void keepInMiddleX() { //makes sure ghosts cant go halfway into a wall
-        int min=1000;
-        int calc;
-        int block = 0;
-        for (int i = 0; i < theMap.getWidth(); i++) {
-            calc = Math.abs((this.x - centralize) - i*pixelMultiplier);
-            if(calc < min) {
-                min = calc;
-                block = i;
+        if (!handler.getPacman().getSuperHungry()) {
+            int min = 1000;
+            int calc;
+            int block = 0;
+            for (int i = 0; i < theMap.getWidth(); i++) {
+                calc = Math.abs((this.x - centralize) - i * pixelMultiplier);
+                if (calc < min) {
+                    min = calc;
+                    block = i;
+                }
             }
+            this.x = block * pixelMultiplier + centralize;
         }
-        this.x = block * pixelMultiplier + centralize;
     }
 
     public void keepInMiddleY() { //makes sure ghosts cant go halfway into a wall
-        int min = 1000;
-        int calc;
-        int block = 0;
-        for (int i = 0; i < theMap.getHeight(); i++) {
-            calc = Math.abs(this.y - i * pixelMultiplier);
-            if (calc < min) {
-                min = calc;
-                block = i;
+        if (!handler.getPacman().getSuperHungry()) {
+            int min = 1000;
+            int calc;
+            int block = 0;
+            for (int i = 0; i < theMap.getHeight(); i++) {
+                calc = Math.abs(this.y - i * pixelMultiplier);
+                if (calc < min) {
+                    min = calc;
+                    block = i;
+                }
             }
+            this.y = block * pixelMultiplier;
         }
-        this.y = block * pixelMultiplier;
     }
 
     public String ChaseMode(int chaseX, int chaseY, String facing) { //chases the coordinate (chaseX, chaseY)
@@ -492,6 +515,13 @@ public class Ghost extends BaseDynamic{
         }
         return 4;
     }
+
+    public boolean inChaseMode(int timer) {
+            if ((timer >= 60*0 && timer <60*7) || (timer >= 60*27 && timer < 60*34) || (timer >= 60*54 && timer < 60*59) || (timer >= 60*79 && timer < 60*84)){
+                return false; //scatter mode
+            }
+            return true; //chase mode
+        }
 
     public double getVelX() {
         return velX;

@@ -16,12 +16,14 @@ import static Game.PacMan.World.MapBuilder.*;
 
 public class PacMan extends BaseDynamic{
 
-	protected double velX,velY,speed = 1.5;
+	protected double velX,velY,speed = 2;
 	public String facing = "Left";
 	public boolean moving = true, turnFlag = false, turnRightFlag = false, turnLeftFlag = false, turnUpFlag = false, turnDownFlag = false;
 	public Animation leftAnim,rightAnim,upAnim,downAnim, pacmanDeathAnim, bigDotBlink;
 	int turnCooldown = 20;
 	public static int health = 3, dedcounter = 0;
+	public static boolean isDead = false;
+	public static boolean superHungry;
 
 
 
@@ -40,86 +42,72 @@ public class PacMan extends BaseDynamic{
 		bigDotBlink.tick();
 		if (dedcounter<=0) {
 			switch (facing) {
-			case "Right":
-				if (velX != 0){
-					velX += speed/2;
-				}
-				x += velX;
-				rightAnim.tick();
-				keepInMiddleY();
-				break;
-			case "Left":
-				x -= velX;
-				leftAnim.tick();
-				keepInMiddleY();
-				break;
-			case "Up":
-				y -= velY;
-				upAnim.tick();
-				keepInMiddleX();
-				break;
-			case "Down":
-				if (velY != 0){
-					velY += speed/2;
-				}
-				y += velY;
-				downAnim.tick();
-				keepInMiddleX();
-				break;
-			}
-			if (turnCooldown <= 0) {
-				turnFlag = false;
-			}
-			if (turnFlag) {
-				turnCooldown--;
+				case "Right":
+					x += velX;
+					rightAnim.tick();
+					keepInMiddleY();
+					break;
+				case "Left":
+					x -= velX;
+					leftAnim.tick();
+					keepInMiddleY();
+					break;
+				case "Up":
+					y -= velY;
+					upAnim.tick();
+					keepInMiddleX();
+					break;
+				case "Down":
+					y += velY;
+					downAnim.tick();
+					keepInMiddleX();
+					break;
 			}
 
 
-			if (handler.getKeyManager().keyHeld(KeyEvent.VK_RIGHT) || handler.getKeyManager().keyHeld(KeyEvent.VK_D)){ //allows holding buttons to move to directions
+			if (handler.getKeyManager().keyHeld(KeyEvent.VK_RIGHT) || handler.getKeyManager().keyHeld(KeyEvent.VK_D)) { //allows holding buttons to move to directions
 				turnRightFlag = true;
-			}
-			else if (handler.getKeyManager().keyJustReleased(KeyEvent.VK_RIGHT) || handler.getKeyManager().keyJustReleased(KeyEvent.VK_D)) {
+			} else if (handler.getKeyManager().keyJustReleased(KeyEvent.VK_RIGHT) || handler.getKeyManager().keyJustReleased(KeyEvent.VK_D)) {
 				turnRightFlag = false;
 			}
-			if (handler.getKeyManager().keyHeld(KeyEvent.VK_LEFT) || handler.getKeyManager().keyHeld(KeyEvent.VK_A)){
+			if (handler.getKeyManager().keyHeld(KeyEvent.VK_LEFT) || handler.getKeyManager().keyHeld(KeyEvent.VK_A)) {
 				turnLeftFlag = true;
-			}
-			else if (handler.getKeyManager().keyJustReleased(KeyEvent.VK_LEFT) || handler.getKeyManager().keyJustReleased(KeyEvent.VK_A)) {
+			} else if (handler.getKeyManager().keyJustReleased(KeyEvent.VK_LEFT) || handler.getKeyManager().keyJustReleased(KeyEvent.VK_A)) {
 				turnLeftFlag = false;
 			}
-			if (handler.getKeyManager().keyHeld(KeyEvent.VK_UP) || handler.getKeyManager().keyHeld(KeyEvent.VK_W)){
+			if (handler.getKeyManager().keyHeld(KeyEvent.VK_UP) || handler.getKeyManager().keyHeld(KeyEvent.VK_W)) {
 				turnUpFlag = true;
-			}
-			else if (handler.getKeyManager().keyJustReleased(KeyEvent.VK_UP) || handler.getKeyManager().keyJustReleased(KeyEvent.VK_W)) {
+			} else if (handler.getKeyManager().keyJustReleased(KeyEvent.VK_UP) || handler.getKeyManager().keyJustReleased(KeyEvent.VK_W)) {
 				turnUpFlag = false;
 			}
-			if (handler.getKeyManager().keyHeld(KeyEvent.VK_DOWN) || handler.getKeyManager().keyHeld(KeyEvent.VK_S)){
+			if (handler.getKeyManager().keyHeld(KeyEvent.VK_DOWN) || handler.getKeyManager().keyHeld(KeyEvent.VK_S)) {
 				turnDownFlag = true;
-			}
-			else if (handler.getKeyManager().keyJustReleased(KeyEvent.VK_DOWN) || handler.getKeyManager().keyJustReleased(KeyEvent.VK_S)) {
+			} else if (handler.getKeyManager().keyJustReleased(KeyEvent.VK_DOWN) || handler.getKeyManager().keyJustReleased(KeyEvent.VK_S)) {
 				turnDownFlag = false;
 			}
 
 
-
-			if (turnRightFlag && !turnFlag && checkPreHorizontalCollisions("Right")) {
-				facing = "Right";
-				turnFlag = true;
-				turnCooldown = 0;
-			} else if (turnLeftFlag && !turnFlag && checkPreHorizontalCollisions("Left")) {
-				facing = "Left";
-				turnFlag = true;
-				turnCooldown = 0;
-			} else if (turnUpFlag && !turnFlag && checkPreVerticalCollisions("Up")) {
-				facing = "Up";
-				turnFlag = true;
-				turnCooldown = 0;
-			} else if (turnDownFlag && !turnFlag && checkPreVerticalCollisions("Down")) {
-				facing = "Down";
-				turnFlag = true;
-				turnCooldown = 0;
+			if (!superHungry) {
+				if (turnRightFlag && checkPreHorizontalCollisions("Right")) {
+					facing = "Right";
+				} else if (turnLeftFlag && checkPreHorizontalCollisions("Left")) {
+					facing = "Left";
+				} else if (turnUpFlag && checkPreVerticalCollisions("Up")) {
+					facing = "Up";
+				} else if (turnDownFlag && checkPreVerticalCollisions("Down")) {
+					facing = "Down";
+				}
+			} else {
+				if (turnRightFlag) {
+					facing = "Right";
+				} else if (turnLeftFlag) {
+					facing = "Left";
+				} else if (turnUpFlag) {
+					facing = "Up";
+				} else if (turnDownFlag) {
+					facing = "Down";
+				}
 			}
-
 
 			if (facing.equals("Right") || facing.equals("Left")) {
 				checkHorizontalCollision();
@@ -142,16 +130,17 @@ public class PacMan extends BaseDynamic{
 		else {
 			pacmanDeathAnim.tick();
 			dedcounter--;
+			x = pacmanX;
+			y = pacmanY;
 			if (pacmanDeathAnim.getIndex()==11) {
-				x = pacmanX;
-				y = pacmanY;
 				ded = false;
+				isDead = false;
 			}
 		}
 		if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_N) && getHealth()<3){
 			health=health+1;
 		}
-		if(handler.getKeyManager().endLife) {
+		if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_P) && !ded) {
 			handler.getMap().reset();
 			health--;
 			ded = true;
@@ -167,26 +156,28 @@ public class PacMan extends BaseDynamic{
 		boolean pacmanDies = false;
 		boolean toUp = facing.equals("Up");
 
-		Rectangle pacmanBounds = toUp ? pacman.getTopBounds() : pacman.getBottomBounds();
+		Rectangle pacmanBounds = new Rectangle (pacman.x + pacman.width/8, pacman.y + pacman.height/8, 3*pacman.width/4, 3*pacman.height/4);
 
 		velY = speed;
-		for (BaseStatic brick : bricks) {
-			if (brick instanceof BoundBlock) {
-				Rectangle brickBounds = !toUp ? brick.getTopBounds() : brick.getBottomBounds();
-				if (pacman.getBounds().intersects(brickBounds)) {
-					velY = 0;
-					if (toUp)
-						pacman.setY(brick.getY() + brick.getDimension().height);
-					else
-						pacman.setY(brick.getY() - pacman.getDimension().height);
+		if(!superHungry) {
+			for (BaseStatic brick : bricks) {
+				if (brick instanceof BoundBlock) {
+					Rectangle brickBounds = !toUp ? brick.getTopBounds() : brick.getBottomBounds();
+					if (pacman.getBounds().intersects(brickBounds)) {
+						velY = 0;
+						if (toUp)
+							pacman.setY(brick.getY() + brick.getDimension().height);
+						else
+							pacman.setY(brick.getY() - pacman.getDimension().height);
+					}
 				}
 			}
 		}
 
 		for(BaseDynamic enemy : enemies){
 			if (enemy instanceof Ghost) {
-				Rectangle enemyBounds = enemy.getBounds();
-				if (pacman.getBounds().intersects(enemyBounds)) {
+				Rectangle enemyBounds = new Rectangle (enemy.x + enemy.width/8, enemy.y + enemy.height/8, 3*enemy.width/4, 3*enemy.height/4);
+				if (pacmanBounds.intersects(enemyBounds)) {
 					if(PacManState.isVulnerable) {
 						Ghost.ghostDies = true;
 						break;
@@ -203,6 +194,7 @@ public class PacMan extends BaseDynamic{
 			handler.getMap().reset();
 			health--;
 			ded = true;
+			isDead = true;
 		}
 	}
 
@@ -238,12 +230,12 @@ public class PacMan extends BaseDynamic{
 		boolean pacmanDies = false;
 		boolean toRight = facing.equals("Right");
 
-		Rectangle pacmanBounds = toRight ? pacman.getRightBounds() : pacman.getLeftBounds();
+		Rectangle pacmanBounds = new Rectangle (pacman.x + pacman.width/8, pacman.y + pacman.height/8, 3*pacman.width/4, 3*pacman.height/4);
 
 		for(BaseDynamic enemy : enemies){
 			if (enemy instanceof Ghost) {
-				Rectangle enemyBounds = enemy.getBounds();
-				if (pacman.getBounds().intersects(enemyBounds)) {
+				Rectangle enemyBounds = new Rectangle (enemy.x + enemy.width/8, enemy.y + enemy.height/8, 3*enemy.width/4, 3*enemy.height/4);
+				if (pacmanBounds.intersects(enemyBounds)) {
 					if(PacManState.isVulnerable) {
 						Ghost.ghostDies = true;
 						break;
@@ -260,17 +252,19 @@ public class PacMan extends BaseDynamic{
 			handler.getMap().reset();
 			health--;
 			ded = true;
+			isDead = true;
 		}else {
-
-			for (BaseStatic brick : bricks) {
-				if (brick instanceof BoundBlock) {
-					Rectangle brickBounds = !toRight ? brick.getRightBounds() : brick.getLeftBounds();
-					if (pacmanBounds.intersects(brickBounds)) {
-						velX = 0;
-						if (toRight)
-							pacman.setX(brick.getX() - pacman.getDimension().width);
-						else
-							pacman.setX(brick.getX() + brick.getDimension().width);
+			if(!superHungry) {
+				for (BaseStatic brick : bricks) {
+					if (brick instanceof BoundBlock) {
+						Rectangle brickBounds = !toRight ? brick.getRightBounds() : brick.getLeftBounds();
+						if (pacman.getBounds().intersects(brickBounds)) {
+							velX = 0;
+							if (toRight)
+								pacman.setX(brick.getX() - pacman.getDimension().width);
+							else
+								pacman.setX(brick.getX() + brick.getDimension().width);
+						}
 					}
 				}
 			}
@@ -298,31 +292,35 @@ public class PacMan extends BaseDynamic{
 	}
 
 	public void keepInMiddleX() { //makes sure pacman cant go halfway into a wall
-		int min=1000;
-		int calc;
-		int block = 0;
-		for (int i = 0; i < theMap.getWidth(); i++) {
-			calc = Math.abs((this.x- centralize)-i*pixelMultiplier);
-			if(calc < min) {
-				min = calc;
-				block = i;
+		if(!superHungry) {
+			int min = 1000;
+			int calc;
+			int block = 0;
+			for (int i = 0; i < theMap.getWidth(); i++) {
+				calc = Math.abs((this.x - centralize) - i * pixelMultiplier);
+				if (calc < min) {
+					min = calc;
+					block = i;
+				}
 			}
+			this.x = block * pixelMultiplier + centralize;
 		}
-		this.x = block * pixelMultiplier + centralize;
 	}
 
 	public void keepInMiddleY() { //makes sure pacman cant go halfway into a wall
-		int min=1000;
-		int calc;
-		int block = 0;
-		for (int i = 0; i < theMap.getHeight(); i++) {
-			calc = Math.abs(this.y-i*pixelMultiplier);
-			if(calc < min) {
-				min = calc;
-				block = i;
+		if(!superHungry) {
+			int min = 1000;
+			int calc;
+			int block = 0;
+			for (int i = 0; i < theMap.getHeight(); i++) {
+				calc = Math.abs(this.y - i * pixelMultiplier);
+				if (calc < min) {
+					min = calc;
+					block = i;
+				}
 			}
+			this.y = block * pixelMultiplier;
 		}
-		this.y = block * pixelMultiplier;
 	}
 
 	public static void setHealth(int x) {
@@ -340,8 +338,12 @@ public class PacMan extends BaseDynamic{
 		return velY;
 	}
 
-	public void ded() {
+	public static boolean getSuperHungry() {
+		return superHungry;
+	}
 
+	public void setSuperHungry(boolean PacmanHungry) {
+		superHungry = PacmanHungry;
 	}
 
 }

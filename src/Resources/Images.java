@@ -32,13 +32,14 @@ public class Images {
 
     public static BufferedImage[] pacmanLogo;
     public static BufferedImage[] pacmanDots;
+    public static BufferedImage[] bigDotBlink;
+    public static BufferedImage[] fruits;
     public static BufferedImage[] bound;
     public static BufferedImage[] pacmanRight;
     public static BufferedImage[] pacmanLeft;
     public static BufferedImage[] pacmanUp;
     public static BufferedImage[] pacmanDown;
     public static BufferedImage[] pacmanDeath;
-    public static BufferedImage[] bigDotBlink;
 
     public static BufferedImage[] ghostBlinkyRight;
     public static BufferedImage[] ghostBlinkyLeft;
@@ -56,8 +57,6 @@ public class Images {
     public static BufferedImage[] ghostClydeLeft;
     public static BufferedImage[] ghostClydeUp;
     public static BufferedImage[] ghostClydeDown;
-    public static BufferedImage[] ghostCanDie;
-    public static BufferedImage[] fruits;
     public static BufferedImage[] edibleGhosts;
     public static BufferedImage intro;
     public static BufferedImage start;
@@ -84,12 +83,13 @@ public class Images {
         
         pacmanLogo = new BufferedImage[1];
         pacmanDots = new BufferedImage[2];
+        bigDotBlink = new BufferedImage[2];
+        fruits = new BufferedImage[2];
         bound = new BufferedImage[16];
         pacmanRight = new BufferedImage[2];
         pacmanLeft = new BufferedImage[2];
         pacmanUp = new BufferedImage[2];
         pacmanDown = new BufferedImage[2];
-        bigDotBlink = new BufferedImage[2];
         pacmanDeath = new BufferedImage[12];
         ghostBlinkyRight = new BufferedImage[2];
         ghostBlinkyLeft = new BufferedImage[2];
@@ -107,9 +107,8 @@ public class Images {
         ghostClydeLeft = new BufferedImage[2];
         ghostClydeUp = new BufferedImage[2];
         ghostClydeDown = new BufferedImage[2];
-        ghostCanDie = new BufferedImage[4];
-        fruits = new BufferedImage[2];
-        edibleGhosts = new BufferedImage[2];
+        edibleGhosts = new BufferedImage[4];
+
 
 
 
@@ -243,9 +242,6 @@ public class Images {
             pacmanDeath[9] = pacmanSpriteSheet.crop(633,1,13,13);
             pacmanDeath[10] = pacmanSpriteSheet.crop(649,1,13,13);
             pacmanDeath[11] = pacmanSpriteSheet.crop(665,1,13,13);
-            
-            edibleGhosts[0] = pacmanSpriteSheet.crop(585, 65, 14, 14);
-            edibleGhosts[1] = pacmanSpriteSheet.crop(617, 65, 14, 14);
 
 
             //Ghost sprites
@@ -302,11 +298,12 @@ public class Images {
             ghostClydeDown[1] = pacmanSpriteSheet.crop(569,113,14,14);
 
 
-            //Ghost can die mode
-            ghostCanDie[0] = pacmanSpriteSheet.crop(585,65,14,14);
-            ghostCanDie[1] = pacmanSpriteSheet.crop(633,65,14,14);
-            ghostCanDie[2] = pacmanSpriteSheet.crop(601,65,14,14);
-            ghostCanDie[3] = pacmanSpriteSheet.crop(617,65,14,14);
+            //Ghost mode when edible
+            edibleGhosts[0] = pacmanSpriteSheet.crop(585,65,14,14);
+            edibleGhosts[1] = pacmanSpriteSheet.crop(633,65,14,14);
+            edibleGhosts[2] = pacmanSpriteSheet.crop(601,65,14,14);
+            edibleGhosts[3] = pacmanSpriteSheet.crop(617,65,14,14);
+
 
             intro = ImageIO.read(getClass().getResourceAsStream("/UI/SpriteSheets/PacMan/intro.png"));
             start = ImageIO.read(getClass().getResourceAsStream("/UI/Backgrounds/startScreen.png"));

@@ -29,13 +29,16 @@ import static Game.PacMan.entities.Dynamics.PacMan.*;
 public class PacManState extends State {
 
 	private UIManager uiManager;
-	private Animation titleAnimation;
 	public String Mode = "Intro";
 	public int startCooldown = 60*4;//seven seconds for the music to finish
 	public static boolean justStarted = true, isVulnerable = false;
-	public static BufferedImage theMap = Images.map1;
+	public static BufferedImage theMap = Images.map2;
 	public static int isVulnerableCooldown = 0;
 	int digits;
+	boolean changeMap;
+	public static boolean everythingEdible;
+	public int[] Konami = new int[9];
+	int KonamiCooldown = 0;
 
 
 	public PacManState(Handler handler){
@@ -54,32 +57,92 @@ public class PacManState extends State {
 
 					ArrayList<BaseStatic> toREmove = new ArrayList<>();
 					for (BaseStatic blocks : handler.getMap().getBlocksOnMap()) {
-						if (blocks instanceof Dot) {
-							if (blocks.getBounds().intersects(handler.getPacman().getBounds())) {
+						if(!handler.getPacman().getSuperHungry()) {
+							if (blocks instanceof Dot) {
+								if (blocks.getBounds().intersects(handler.getPacman().getBounds())) {
+									handler.getMusicHandler().playEffect("pacman_chomp.wav");
+									toREmove.add(blocks);
+									handler.getScoreManager().addPacmanCurrentScore(10);
+								}
+							} else if (blocks instanceof BigDot) {
+								if (blocks.getBounds().intersects(handler.getPacman().getBounds())) {
+									handler.getMusicHandler().playEffect("pacman_chomp.wav");
+									toREmove.add(blocks);
+									handler.getScoreManager().addPacmanCurrentScore(100);
+									isVulnerableCooldown = 60 * 5;
+									isVulnerable = true;
+								}
+							} else if (blocks instanceof Fruit) {
+								if (blocks.getBounds().intersects(handler.getPacman().getBounds())) {
+									handler.getMusicHandler().playEffect("pacman_chomp.wav");
+									toREmove.add(blocks);
+									handler.getScoreManager().addPacmanCurrentScore(120);
+								}
+							}
+						} else {
+							if(blocks instanceof BigDot) {
+								if (blocks.getBounds().intersects(handler.getPacman().getBounds())) {
+									handler.getMusicHandler().playEffect("pacman_chomp.wav");
+									toREmove.add(blocks);
+									handler.getScoreManager().addPacmanCurrentScore(100);
+									isVulnerableCooldown = 60 * 5;
+									isVulnerable = true;
+								}
+							} else if (blocks instanceof Fruit) {
+								if (blocks.getBounds().intersects(handler.getPacman().getBounds())) {
+									handler.getMusicHandler().playEffect("pacman_chomp.wav");
+									toREmove.add(blocks);
+									handler.getScoreManager().addPacmanCurrentScore(120);
+								}
+							} else if (blocks.getBounds().intersects(handler.getPacman().getBounds())) {
 								handler.getMusicHandler().playEffect("pacman_chomp.wav");
 								toREmove.add(blocks);
 								handler.getScoreManager().addPacmanCurrentScore(10);
 							}
-						} else if (blocks instanceof BigDot) {
-							if (blocks.getBounds().intersects(handler.getPacman().getBounds())) {
-								handler.getMusicHandler().playEffect("pacman_chomp.wav");
-								toREmove.add(blocks);
-								handler.getScoreManager().addPacmanCurrentScore(100);
-								isVulnerableCooldown= 60*5;
-								isVulnerable = true;
+						}
 
-							}
-						}
-						else if (blocks instanceof Fruit) {
-							if (blocks.getBounds().intersects(handler.getPacman().getBounds())) {
-								handler.getMusicHandler().playEffect("pacman_chomp.wav");
-								toREmove.add(blocks);
-								handler.getScoreManager().addPacmanCurrentScore(120);
-							}
-						}
 					}
 					for (BaseStatic removing : toREmove) {
 						handler.getMap().getBlocksOnMap().remove(removing);
+					}
+
+
+					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_UP) || Konami[0] == 1) {
+						Konami[0] = 1;
+						KonamiCooldown++;
+						if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_UP) || Konami[1] == 1) {
+							Konami[1] = 1;
+							if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_DOWN) || Konami[2] == 1) {
+								Konami[2] = 1;
+								if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_DOWN) || Konami[3] == 1) {
+									Konami[3] = 1;
+									if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_LEFT) || Konami[4] == 1) {
+										Konami[4] = 1;
+										if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_RIGHT) || Konami[5] == 1) {
+											Konami[5] = 1;
+											if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_LEFT) || Konami[6] == 1) {
+												Konami[6] = 1;
+												if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_RIGHT) || Konami[7] == 1) {
+													Konami[7] = 1;
+													if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_SPACE) || Konami[8] == 1) {
+														Konami[8] = 1;
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					if (Konami[8] == 1){
+						Konami = new int[9];
+						KonamiCooldown = 0;
+						if (handler.getPacman().getSuperHungry()) {
+							handler.getPacman().setSuperHungry(false);
+						} else {
+							handler.getPacman().setSuperHungry(true);
+						}
 					}
 
 
@@ -88,12 +151,23 @@ public class PacManState extends State {
 					}
 
 					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_X)) {
-						killAll();
+						killAll(true);
 					}
+
+					if (handler.getKeyManager().keyJustPressed((KeyEvent.VK_Z))) {
+						killAll(false);
+					}
+
 
                     if (handler.getScoreManager().getPacmanCurrentScore() > handler.getScoreManager().getPacmanHighScore()) {
                         handler.getScoreManager().setPacmanHighScore(handler.getScoreManager().getPacmanCurrentScore());
                     }
+
+                    for (int i = 0; i < ghosts.length; i++) {
+                    	if (ghosts[i]==0){
+                    		spawn(true);
+						}
+					}
                     
                     if(isVulnerableCooldown<= 0) {
                     	isVulnerable=false;
@@ -101,20 +175,36 @@ public class PacManState extends State {
                     
                     isVulnerableCooldown--;
 
+                    if (addEdibles() == 0 || handler.getKeyManager().keyJustPressed((KeyEvent.VK_B))) {
+                    	Mode = "Menu";
+                    	changeMap = true;
+						killAll(true);
+						toRemove();
+					}
+
 				} else {
 					startCooldown--;
 				}
 			}
 			else {
-				titleAnimation.tick();
 				Mode = "Menu";
-				killAll();
+				killAll(true);
 				toRemove();
+				handler.getScoreManager().setGalagaCurrentScore(0);
 			}
 		}else if (Mode.equals("Menu")){
 			setHealth(3);
 			startCooldown = 60*4;
 			if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_ENTER)){
+				if(changeMap) {
+					if(theMap == Images.map1) {
+						theMap = Images.map2;
+					} else {
+						theMap = Images.map1;
+					}
+				}
+				changeMap = false;
+				handler.setMap(MapBuilder.createMap(theMap, handler));
 				Mode = "Stage";
 				handler.getMusicHandler().playEffect("pacman_beginning.wav");
 				spawnAll();
@@ -146,14 +236,14 @@ public class PacManState extends State {
             for (int i = 0; i< PacMan.getHealth();i++) {
                 g.drawImage(Images.pacmanRight[0], (handler.getWidth() * 11 / 40 + handler.getHeight() * 39 / 40) + (100*i), handler.getHeight()-handler.getHeight()/4, 64, 64, null);
             }
-//            for (BaseDynamic entity : handler.getMap().getEnemiesOnMap()) { //see ghosts and pacman bounds
+            for (BaseDynamic entity : handler.getMap().getEnemiesOnMap()) { //see ghosts and pacman bounds
 //                g.setColor(Color.WHITE);
 //                g.drawRect(entity.getBounds().x,entity.getBounds().y,entity.getBounds().width,entity.getBounds().height);
-//                if (entity instanceof Ghost) { //see the ghosts' targets (all of them explained in the Ghost class)
-//                    g.setColor(Color.RED);
-//                    g.drawRect(((Ghost) entity).chasingX, ((Ghost) entity).chasingY, pixelMultiplier, pixelMultiplier);
-//                }
-//            }
+                if (entity instanceof Ghost) { //see the ghosts' targets (all of them explained in the Ghost class)
+                    g.setColor(Color.RED);
+                    g.drawRect(((Ghost) entity).chasingX, ((Ghost) entity).chasingY, pixelMultiplier, pixelMultiplier);
+                }
+            }
 //            for (BaseStatic blocks : handler.getMap().getBlocksOnMap()) {
 //                if(blocks instanceof BoundBlock) {
 //                    g.drawRect(blocks.getRightBounds().x, blocks.getRightBounds().y, blocks.getRightBounds().width, blocks.getRightBounds().height);
@@ -197,6 +287,16 @@ public class PacManState extends State {
 	        }
 	        handler.getMap().getEnemiesToAdd().clear();
 	    }
+
+	    public int addEdibles() {
+			int count = 0;
+		 	for (BaseStatic dots : handler.getMap().getBlocksOnMap()) {
+		 		if(dots instanceof Dot || dots instanceof BigDot || dots instanceof Fruit) {
+		 			count++;
+				}
+		 	}
+		 	return count;
+		}
 
 	}
 
