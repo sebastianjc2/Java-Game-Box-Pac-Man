@@ -36,20 +36,22 @@ public class GhostSpawner extends BaseStatic{
         }
     }
 
-    public static void killAll() {
+    public static void killAll(boolean removeFromArray) {
         for (BaseDynamic entity : handler.getMap().getEnemiesOnMap()) {
             if (entity instanceof Ghost) {
                 entity.ded = true;
+                if(removeFromArray) {
+                    ghosts[((Ghost) entity).ghost] = 0;
+                }
             }
         }
-        ghosts = new int[4];
     }
 
     public static void spawn(boolean addToArray) {
         if (addToArray) {
             for (int i = 0; i < ghosts.length; i++) {
                 if (ghosts[i] == 0) {
-                    BaseDynamic newGhost = new Ghost(x, y, pixelMultiplier, pixelMultiplier, handler, i);
+                    BaseDynamic newGhost = new Ghost(x + (random.nextInt(3)-1)*pixelMultiplier, y, pixelMultiplier, pixelMultiplier, handler, i);
                     mapInCreation.toAdd(newGhost);
                     ghosts[i] = 1;
                     break;
