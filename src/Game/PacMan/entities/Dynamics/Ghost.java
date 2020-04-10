@@ -27,8 +27,8 @@ public class Ghost extends BaseDynamic{
     public Animation leftAnim,rightAnim,upAnim,downAnim, edibleGhostsAnim;
     int turnCooldown = 0;
     BufferedImage image;
-    int leaveSpawnTimer, ghost, timer;
-    public int chasingX, chasingY, facingMultiplierX, facingMultiplierY, position;
+    int leaveSpawnTimer, timer;
+    public int chasingX, chasingY, facingMultiplierX, facingMultiplierY, position, ghost;
 
     public static String[] moves = new String[] {"Right", "Left", "Up", "Down", "None"};
 
