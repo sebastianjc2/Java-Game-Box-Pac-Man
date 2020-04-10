@@ -113,7 +113,7 @@ public class PacManState extends State {
 						handler.getMap().getBlocksOnMap().remove(removing);
 					}
 
-
+					//Konami Code esque feature, press Up Up Down Down Left Right Left Right SpaceBar and you can now eat walls
 					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_UP) || Konami[0] == 1) {
 						Konami[0] = 1;
 						KonamiCooldown++;
@@ -153,19 +153,19 @@ public class PacManState extends State {
 					}
 
 
-					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_C)) {
+					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_C)) { //spawns a ghost
 						spawn(false);
 					}
 
-					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_X)) {
+					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_X)) { //resets ghosts
 						killAll(true);
 					}
 
-					if (handler.getKeyManager().keyJustPressed((KeyEvent.VK_Z))) {
+					if (handler.getKeyManager().keyJustPressed((KeyEvent.VK_Z))) { //permanently removes ghosts
 						killAll(false);
 					}
 
-					if (handler.getKeyManager().keyJustPressed((KeyEvent.VK_H))) {
+					if (handler.getKeyManager().keyJustPressed((KeyEvent.VK_H))) { //allows viewing hitboxes
 						if(seeHitboxes) {
 							seeHitboxes = false;
 						} else {
@@ -173,7 +173,7 @@ public class PacManState extends State {
 						}
 					}
 
-					if (handler.getKeyManager().keyJustPressed((KeyEvent.VK_T))) {
+					if (handler.getKeyManager().keyJustPressed((KeyEvent.VK_T))) { //allows viewing ghost targets
 						if(seeTargets) {
 							seeTargets = false;
 						} else {
@@ -185,7 +185,7 @@ public class PacManState extends State {
                         handler.getScoreManager().setPacmanHighScore(handler.getScoreManager().getPacmanCurrentScore());
                     }
 
-                    for (int i = 0; i < ghosts.length; i++) {
+                    for (int i = 0; i < ghosts.length; i++) { //verifies that the 4 main ghosts are in the game (unless you permanently remove them with Z)
                     	if (ghosts[i]==0){
                     		spawn(true);
 						}
@@ -197,7 +197,7 @@ public class PacManState extends State {
                     
                     isVulnerableCooldown--;
 
-                    if (addEdibles() == 0 || handler.getKeyManager().keyJustPressed((KeyEvent.VK_B))) {
+                    if (addEdibles() == 0 || handler.getKeyManager().keyJustPressed((KeyEvent.VK_B))) { //Changes map when all things have been eaten/ when you press B
                     	Mode = "Menu";
                     	changeMap = true;
                     	isVulnerable = false;
