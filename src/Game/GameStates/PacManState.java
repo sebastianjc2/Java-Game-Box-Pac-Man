@@ -211,9 +211,10 @@ public class PacManState extends State {
 			}
 			else {
 				Mode = "Menu";
+				System.out.println("here");
 				killAll(true);
 				toRemove();
-				handler.getScoreManager().setGalagaCurrentScore(0);
+				handler.getScoreManager().setPacmanCurrentScore(0);
 			}
 		}else if (Mode.equals("Menu")){
 			setHealth(3);
