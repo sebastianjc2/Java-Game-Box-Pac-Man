@@ -190,11 +190,11 @@ public class PacManState extends State {
                     		spawn(true);
 						}
 					}
-                    
+
                     if(isVulnerableCooldown<= 0) {
                     	isVulnerable=false;
                     }
-                    
+
                     isVulnerableCooldown--;
 
                     if (addEdibles() == 0 || handler.getKeyManager().keyJustPressed((KeyEvent.VK_B))) { //Changes map when all things have been eaten/ when you press B

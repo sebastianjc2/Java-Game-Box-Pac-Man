@@ -130,11 +130,11 @@ public class PacMan extends BaseDynamic{
 		else {
 			pacmanDeathAnim.tick();
 			dedcounter--;
-			x = pacmanX;
-			y = pacmanY;
 			if (pacmanDeathAnim.getIndex()==11) {
 				ded = false;
 				isDead = false;
+				x = pacmanX;
+				y = pacmanY;
 			}
 		}
 		if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_N) && getHealth()<3){
@@ -182,7 +182,7 @@ public class PacMan extends BaseDynamic{
 						Ghost.ghostDies = true;
 						break;
 					}
-					else {
+					else if (!ded) {
 						pacmanDies = true;
 						break;
 					}
@@ -240,7 +240,7 @@ public class PacMan extends BaseDynamic{
 						Ghost.ghostDies = true;
 						break;
 					}
-					else {
+					else if (!ded) {
 						pacmanDies = true;
 						break;
 					}
