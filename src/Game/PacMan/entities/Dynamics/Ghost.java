@@ -274,7 +274,6 @@ public class Ghost extends BaseDynamic{
             handler.getScoreManager().addPacmanCurrentScore(500);
             handler.getMusicHandler().playEffect("pacman_eatghost.wav");
             ded = true;
-            handler.getScoreManager().addPacmanCurrentScore(500);
             ghosts[this.ghost] = 0;
         }
     }
@@ -333,7 +332,6 @@ public class Ghost extends BaseDynamic{
             handler.getScoreManager().addPacmanCurrentScore(500);
             handler.getMusicHandler().playEffect("pacman_eatghost.wav");
             ded = true;
-            handler.getScoreManager().addPacmanCurrentScore(500);
             ghosts[this.ghost] = 0;
         }else {
 
