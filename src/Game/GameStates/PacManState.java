@@ -36,8 +36,7 @@ public class PacManState extends State {
 	public static BufferedImage theMap = Images.map2;
 	public static int isVulnerableCooldown = 0;
 	int digits;
-	boolean changeMap;
-	public static boolean everythingEdible;
+	boolean changeMap, seeHitboxes, seeTargets;
 	public int[] Konami = new int[9];
 	int KonamiCooldown = 0;
 
@@ -114,7 +113,7 @@ public class PacManState extends State {
 						handler.getMap().getBlocksOnMap().remove(removing);
 					}
 
-
+					//Konami Code esque feature, press Up Up Down Down Left Right Left Right SpaceBar and you can now eat walls
 					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_UP) || Konami[0] == 1) {
 						Konami[0] = 1;
 						KonamiCooldown++;
@@ -154,36 +153,51 @@ public class PacManState extends State {
 					}
 
 
-					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_C)) {
+					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_C)) { //spawns a ghost
 						spawn(false);
 					}
 
-					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_X)) {
+					if (handler.getKeyManager().keyJustPressed(KeyEvent.VK_X)) { //resets ghosts
 						killAll(true);
 					}
 
-					if (handler.getKeyManager().keyJustPressed((KeyEvent.VK_Z))) {
+					if (handler.getKeyManager().keyJustPressed((KeyEvent.VK_Z))) { //permanently removes ghosts
 						killAll(false);
 					}
 
+					if (handler.getKeyManager().keyJustPressed((KeyEvent.VK_H))) { //allows viewing hitboxes
+						if(seeHitboxes) {
+							seeHitboxes = false;
+						} else {
+							seeHitboxes = true;
+						}
+					}
+
+					if (handler.getKeyManager().keyJustPressed((KeyEvent.VK_T))) { //allows viewing ghost targets
+						if(seeTargets) {
+							seeTargets = false;
+						} else {
+							seeTargets = true;
+						}
+					}
 
                     if (handler.getScoreManager().getPacmanCurrentScore() > handler.getScoreManager().getPacmanHighScore()) {
                         handler.getScoreManager().setPacmanHighScore(handler.getScoreManager().getPacmanCurrentScore());
                     }
 
-                    for (int i = 0; i < ghosts.length; i++) {
+                    for (int i = 0; i < ghosts.length; i++) { //verifies that the 4 main ghosts are in the game (unless you permanently remove them with Z)
                     	if (ghosts[i]==0){
                     		spawn(true);
 						}
 					}
-                    
+
                     if(isVulnerableCooldown<= 0) {
                     	isVulnerable=false;
                     }
-                    
+
                     isVulnerableCooldown--;
 
-                    if (addEdibles() == 0 || handler.getKeyManager().keyJustPressed((KeyEvent.VK_B))) {
+                    if (addEdibles() == 0 || handler.getKeyManager().keyJustPressed((KeyEvent.VK_B))) { //Changes map when all things have been eaten/ when you press B
                     	Mode = "Menu";
                     	changeMap = true;
                     	isVulnerable = false;
@@ -246,21 +260,31 @@ public class PacManState extends State {
                 g.drawImage(Images.pacmanRight[0], (handler.getWidth() * 11 / 40 + handler.getHeight() * 39 / 40) + (100*i), handler.getHeight()-handler.getHeight()/4, 64, 64, null);
             }
             for (BaseDynamic entity : handler.getMap().getEnemiesOnMap()) { //see ghosts and pacman bounds
-//                g.setColor(Color.WHITE);
-//                g.drawRect(entity.getBounds().x,entity.getBounds().y,entity.getBounds().width,entity.getBounds().height);
-                if (entity instanceof Ghost) { //see the ghosts' targets (all of them explained in the Ghost class)
-                    g.setColor(Color.RED);
+            	if(seeHitboxes) {
+                	g.setColor(Color.GREEN);
+                	g.drawRect(entity.getBounds().x+entity.width/8,entity.getBounds().y+entity.height/8,3*entity.getBounds().width/4,3*entity.getBounds().height/4);
+				}
+                if (entity instanceof Ghost && seeTargets) { //see the ghosts' targets (all of them explained in the Ghost class)
+                    if(((Ghost) entity).ghost == 0) {
+                    	g.setColor(Color.RED);
+					} else if (((Ghost) entity).ghost == 1) {
+                    	g.setColor(Color.PINK);
+					} else if(((Ghost) entity).ghost == 2) {
+                    	g.setColor(Color.BLUE);
+					} else {
+                    	g.setColor(Color.ORANGE);
+					}
                     g.drawRect(((Ghost) entity).chasingX, ((Ghost) entity).chasingY, pixelMultiplier, pixelMultiplier);
                 }
             }
-//            for (BaseStatic blocks : handler.getMap().getBlocksOnMap()) {
+            for (BaseStatic blocks : handler.getMap().getBlocksOnMap()) {
 //                if(blocks instanceof BoundBlock) {
 //                    g.drawRect(blocks.getRightBounds().x, blocks.getRightBounds().y, blocks.getRightBounds().width, blocks.getRightBounds().height);
 //                    g.drawRect(blocks.getLeftBounds().x, blocks.getLeftBounds().y, blocks.getLeftBounds().width, blocks.getLeftBounds().height);
 //                    g.drawRect(blocks.getTopBounds().x, blocks.getTopBounds().y, blocks.getTopBounds().width, blocks.getTopBounds().height);
 //                    g.drawRect(blocks.getBottomBounds().x, blocks.getBottomBounds().y, blocks.getBottomBounds().width, blocks.getBottomBounds().height);
 //                }
-//            }  //USED TO CHECK ENTITY BOUNDS
+            }  //USED TO CHECK BLOCK BOUNDS
         }else if (Mode.equals("Menu")){
             g.drawImage(Images.start,handler.getWidth() / 4,0,handler.getWidth()/2,handler.getHeight(),null);
             g.setColor(Color.WHITE);
